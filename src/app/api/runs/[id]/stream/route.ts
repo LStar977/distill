@@ -1,5 +1,10 @@
 import { getRunFile } from "@/lib/runs";
 
+// Streams run up to ~45s at the default replay rate. Vercel's Hobby plan allows
+// 60s per function; the client resumes from its current clock if a stream is cut.
+export const maxDuration = 60;
+export const dynamic = "force-dynamic";
+
 /**
  * Replays a run's event timeline as server-sent events, paced by each event's
  * `t` (seconds from start) divided by `speed`. `from` skips ahead: everything

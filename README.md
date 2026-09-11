@@ -82,6 +82,15 @@ which is where the writing quality shows. The whole flagship dataset plus a real
 cost about $4.50 in total including the smoke tests, and the hosted demo then costs
 nothing to serve.
 
+### Deploying
+
+Zero-config on Vercel: import the repo, accept the detected Next.js settings, deploy.
+No environment variables are needed for the public demo. The pre-computed runs in
+`data/runs` are traced into the serverless bundles (`next.config.ts`), and the replay
+stream declares a 60-second function limit and resumes client-side if a stream is cut.
+Setting `DISTILL_API_KEY` on the deployment would enable live runs, which cost money
+per run, so leave it unset for a public portfolio deploy.
+
 Other scripts:
 
 ```bash

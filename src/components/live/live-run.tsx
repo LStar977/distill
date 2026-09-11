@@ -47,9 +47,13 @@ export function LiveRun({
   const [reconnectKey, setReconnectKey] = useState(0);
   const fromRef = useRef(initialAt);
   const doneRef = useRef(state.done);
+  const clockRef = useRef(initialAt);
   useEffect(() => {
     doneRef.current = state.done;
   }, [state.done]);
+  useEffect(() => {
+    clockRef.current = clock;
+  }, [clock]);
 
   const totalItems = run.stats.items;
   const finalT = durationSeconds;
@@ -81,7 +85,15 @@ export function LiveRun({
         es.close();
       }
     };
-    es.onerror = () => es.close();
+    es.onerror = () => {
+      es.close();
+      // A hosting time limit or a dropped connection: resume from where we are
+      // rather than restarting. The server flushes everything ≤ `from` at once.
+      if (!doneRef.current) {
+        fromRef.current = clockRef.current;
+        setTimeout(() => setReconnectKey((k) => k + 1), 500);
+      }
+    };
     return () => {
       es.close();
       cancelAnimationFrame(raf);
