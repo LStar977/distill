@@ -1,26 +1,195 @@
 @import "tailwindcss";
 
+/* Design tokens: midnight ember, from design/handoff (component sheet 1h). */
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --paper: #0d1117;
+  --surface: #161b22;
+  --surface-2: #21262d;
+  --ink: #e6edf3;
+  --ink-dim: #8b949e;
+  --ink-faint: #565e69;
+  --line: #30363d;
+  --line-strong: #484f58;
+  --signal: #ff6b35;
+  --signal-hover: #e85a24;
+  --signal-soft: #3a1f14;
+  --mark-bg: #4a2414;
+  --mark-text: #ffe4d9;
+  --instrument: #0a0d12;
+  --instrument-line: #21262d;
+  --instrument-deep: #06080b;
+  --instrument-row: #10151c;
+  --instrument-chip-line: #262c34;
+  --instrument-ink: #e9e9ee;
+  --instrument-ink-bright: #f2f2f5;
+  --instrument-ink-dim: #8a8f9c;
+  --instrument-ink-soft: #c9cbd3;
+  --instrument-queued: #363d47;
+  --positive: #2f9e6e;
+  --negative: #d64545;
+  --neutral: #8a8f9c;
+  --toast-bg: #e6edf3;
+  --toast-text: #0d1117;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-paper: var(--paper);
+  --color-surface: var(--surface);
+  --color-surface-2: var(--surface-2);
+  --color-ink: var(--ink);
+  --color-ink-dim: var(--ink-dim);
+  --color-ink-faint: var(--ink-faint);
+  --color-line: var(--line);
+  --color-line-strong: var(--line-strong);
+  --color-signal: var(--signal);
+  --color-signal-hover: var(--signal-hover);
+  --color-signal-soft: var(--signal-soft);
+  --color-mark-bg: var(--mark-bg);
+  --color-mark-text: var(--mark-text);
+  --color-instrument: var(--instrument);
+  --color-instrument-line: var(--instrument-line);
+  --color-instrument-deep: var(--instrument-deep);
+  --color-instrument-row: var(--instrument-row);
+  --color-instrument-chip-line: var(--instrument-chip-line);
+  --color-instrument-ink: var(--instrument-ink);
+  --color-instrument-ink-bright: var(--instrument-ink-bright);
+  --color-instrument-ink-dim: var(--instrument-ink-dim);
+  --color-instrument-ink-soft: var(--instrument-ink-soft);
+  --color-instrument-queued: var(--instrument-queued);
+  --color-positive: var(--positive);
+  --color-negative: var(--negative);
+  --color-neutral: var(--neutral);
+  --font-serif: "Source Serif 4 Variable", Georgia, serif;
+  --font-sans: "IBM Plex Sans", system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, monospace;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
+/* Base styles live in the base layer so utilities can override them. */
+@layer base {
+  html,
+  body {
+    height: 100%;
+  }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: var(--font-sans);
+    font-size: 14px;
+    line-height: 1.4;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  a {
+    color: var(--signal);
+  }
+  a:hover {
+    color: var(--signal-hover);
+  }
+
+  textarea,
+  input,
+  button {
+    font: inherit;
   }
 }
 
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+/* Utilities the handoff uses everywhere. */
+.tnum {
+  font-variant-numeric: tabular-nums;
+}
+.eyebrow {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--ink-dim);
+}
+.eyebrow-instrument {
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  color: var(--instrument-ink-dim);
+}
+mark.evidence {
+  background: var(--mark-bg);
+  color: var(--mark-text);
+  padding: 1px 4px;
+  border-radius: 3px;
+  -webkit-box-decoration-break: clone;
+  box-decoration-break: clone;
+}
+.pretty {
+  text-wrap: pretty;
+}
+
+@keyframes dsSlideIn {
+  from {
+    transform: translateX(32px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes dsUp {
+  from {
+    transform: translateY(24px);
+    opacity: 0;
+  }
+  to {
+    transform: none;
+    opacity: 1;
+  }
+}
+@keyframes dsToast {
+  from {
+    transform: translate(-50%, 8px);
+    opacity: 0;
+  }
+  to {
+    transform: translate(-50%, 0);
+    opacity: 1;
+  }
+}
+@keyframes dsBlink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.25;
+  }
+}
+@keyframes dsPulse {
+  0% {
+    transform: scale(1);
+    opacity: 0.7;
+  }
+  100% {
+    transform: scale(2.4);
+    opacity: 0;
+  }
+}
+.anim-slide-in {
+  animation: dsSlideIn 0.28s cubic-bezier(0.2, 0.7, 0.2, 1);
+}
+.anim-up {
+  animation: dsUp 0.25s ease-out;
+}
+.anim-up-slow {
+  animation: dsUp 0.4s ease-out;
+}
+.anim-toast {
+  animation: dsToast 0.25s ease-out;
+}
+.anim-blink {
+  animation: dsBlink 1.2s infinite;
+}
+.anim-pulse-ring {
+  transform-origin: 9px 9px;
+  transform-box: view-box;
+  animation: dsPulse 1.4s ease-out infinite;
 }

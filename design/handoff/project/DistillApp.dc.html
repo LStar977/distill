@@ -1,0 +1,573 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<script src="./support.js"></script>
+</head>
+<body>
+<x-dc>
+<helmet data-dc-atomics>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500&family=IBM+Plex+Sans:wght@400;500;600&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,600;1,8..60,400&display=swap" rel="stylesheet">
+<style>body{margin:0;background:#0D1117;color:#E6EDF3} a{color:#FF6B35} a:hover{color:#E85A24} textarea{font:inherit} @keyframes dsSlideIn{from{transform:translateX(32px);opacity:0}to{transform:none;opacity:1}} @keyframes dsUp{from{transform:translateY(24px);opacity:0}to{transform:none;opacity:1}} @keyframes dsToast{from{transform:translate(-50%,8px);opacity:0}to{transform:translate(-50%,0);opacity:1}} @keyframes dsSweep{to{transform:rotate(360deg)}} @keyframes dsBlink{0%,100%{opacity:1}50%{opacity:.25}} @keyframes dsPulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(2.4);opacity:0}}</style>
+</helmet>
+<div style="height:{{ rootH }};display:flex;flex-direction:column;background:#0D1117;color:#E6EDF3;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:14px;line-height:1.4;overflow:hidden;-webkit-font-smoothing:antialiased">
+  <div style="height:52px;flex:none;display:flex;align-items:center;gap:16px;padding:0 20px;border-bottom:1px solid #30363D;background:#0D1117">
+    <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:21px;letter-spacing:-0.01em;color:#E6EDF3">Distill</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;color:#8B949E">v0.1</span></div>
+    <nav style="display:flex;gap:2px;margin-left:12px">
+      <sc-for list="{{ nav }}" as="n" hint-placeholder-count="4">
+        <button onClick="{{ n.go }}" style="appearance:none;border:0;background:transparent;cursor:pointer;padding:6px 10px 4px;border-radius:6px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:{{ n.color }};display:flex;flex-direction:column;align-items:center;gap:3px" style-hover="background:#161B22">{{ n.label }}<svg width="4" height="4" style="display:block"><circle cx="2" cy="2" r="2" fill="{{ n.dot }}"></circle></svg></button>
+      </sc-for>
+    </nav>
+    <div style="flex:1"></div>
+    <sc-if value="{{ demoBanner }}" hint-placeholder-val="{{ true }}">
+      <span style="display:inline-flex;align-items:center;gap:7px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;color:#8B949E;border:1px solid #30363D;border-radius:999px;padding:4px 10px;background:#161B22"><svg width="6" height="6" style="display:block"><circle cx="3" cy="3" r="3" fill="#FF6B35"></circle></svg>Demo · pre-computed run</span>
+    </sc-if>
+    <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;color:#8B949E">Run #12</span>
+    <div style="width:28px;height:28px;border-radius:50%;background:#30363D;border:1px solid #30363D"></div>
+  </div>
+
+  <sc-if value="{{ isHome }}" hint-placeholder-val="{{ true }}">
+  <div style="flex:1;min-height:0;overflow:auto">
+    <div style="max-width:1140px;margin:0 auto;padding:28px 32px 48px;display:flex;flex-direction:column;gap:32px">
+      <sc-if value="{{ demoBanner }}" hint-placeholder-val="{{ true }}">
+        <div style="display:flex;align-items:center;gap:12px;background:#161B22;border:1px solid #30363D;border-radius:8px;padding:10px 14px;font-size:13px;color:#E6EDF3"><svg width="8" height="8" style="display:block;flex:none"><circle cx="4" cy="4" r="4" fill="#FF6B35"></circle></svg><span style="flex:1">You're viewing a pre-computed run. Sign in with a key to run live.</span><a href="#" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:12px;text-decoration:none">Add API key →</a></div>
+      </sc-if>
+      <header style="display:flex;flex-direction:column;gap:6px">
+        <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:34px;line-height:1.1;letter-spacing:-0.01em">New run</h1>
+        <p style="margin:0;font-size:15px;color:#8B949E;max-width:560px;text-wrap:pretty">Drop in a pile of feedback. Get back a ranked list of decisions, each one citing its sources.</p>
+      </header>
+      <section style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Dataset</span>
+        <div style="display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px">
+          <sc-for list="{{ datasets }}" as="d" hint-placeholder-count="3">
+            <button onClick="{{ d.pick }}" style="appearance:none;cursor:pointer;text-align:left;display:flex;flex-direction:column;gap:8px;padding:18px;background:#161B22;border:1px solid {{ d.border }};box-shadow:{{ d.shadow }};border-radius:10px;font-family:'IBM Plex Sans',system-ui,sans-serif;color:#E6EDF3;min-height:168px" style-hover="border-color:#E6EDF3">
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">{{ d.kind }}</span>
+              <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:19px;line-height:1.2">{{ d.n }}</span>
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">{{ d.meta }}</span>
+              <span style="font-size:13px;color:#8B949E;margin-top:auto;text-wrap:pretty">{{ d.desc }}</span>
+            </button>
+          </sc-for>
+          <div style="display:flex;flex-direction:column;justify-content:center;align-items:center;gap:8px;padding:18px;border:1px dashed #484F58;border-radius:10px;color:#8B949E;text-align:center;min-height:168px">
+            <span style="font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:19px;color:#E6EDF3">Upload your own</span>
+            <span style="font-size:13px">CSV or paste text</span>
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px">Live runs capped at 500 items on the demo</span>
+          </div>
+        </div>
+      </section>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:24px;align-items:start">
+        <section style="display:flex;flex-direction:column;gap:16px;padding:22px;background:#161B22;border:1px solid #30363D;border-radius:10px">
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Context · feeds the strategic-fit score</span>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">What's the product?<textarea rows="3" style="resize:vertical;padding:10px 12px;border:1px solid #30363D;border-radius:8px;font-size:14px;line-height:1.5;color:#E6EDF3;background:#0D1117;font-weight:400">IronLog is a paid workout tracker for strength athletes on iOS and Apple Watch. We're deciding what to fix before the next annual-pricing push.</textarea></label>
+          <label style="display:flex;flex-direction:column;gap:6px;font-size:13px;font-weight:500">What are you trying to decide? <span style="color:#8B949E;font-weight:400">(optional)</span><textarea rows="2" placeholder="e.g. Which two things to fix this quarter to reduce churn among paid subscribers" style="resize:vertical;padding:10px 12px;border:1px solid #30363D;border-radius:8px;font-size:14px;line-height:1.5;color:#E6EDF3;background:#0D1117;font-weight:400"></textarea></label>
+        </section>
+        <aside style="display:flex;flex-direction:column;gap:12px">
+          <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;overflow:hidden">
+            <button onClick="{{ toggleSettings }}" style="appearance:none;border:0;background:transparent;cursor:pointer;width:100%;display:flex;align-items:center;justify-content:space-between;gap:12px;padding:14px 16px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;color:#E6EDF3;text-align:left" style-hover="background:#0D1117"><span>Run settings</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E;font-weight:400">{{ settingsSummary }}</span></button>
+            <sc-if value="{{ settingsOpen }}" hint-placeholder-val="{{ false }}">
+              <div style="display:flex;flex-direction:column;gap:14px;padding:4px 16px 16px;border-top:1px solid #30363D">
+                <div style="display:flex;justify-content:space-between;align-items:center;padding-top:12px"><span style="font-size:13px">Depth</span>
+                  <div style="display:inline-flex;border:1px solid #30363D;border-radius:8px;padding:2px;background:#0D1117">
+                    <button onClick="{{ setFast }}" style="appearance:none;border:0;cursor:pointer;padding:5px 12px;border-radius:6px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;font-weight:500;background:{{ fastBg }};color:#E6EDF3">Fast</button>
+                    <button onClick="{{ setThorough }}" style="appearance:none;border:0;cursor:pointer;padding:5px 12px;border-radius:6px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;font-weight:500;background:{{ thoroughBg }};color:#E6EDF3">Thorough</button>
+                  </div>
+                </div>
+                <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-size:13px">Item cap</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:13px;border:1px solid #30363D;border-radius:6px;padding:4px 10px;background:#0D1117">3,214</span></div>
+                <div style="display:flex;justify-content:space-between;align-items:center;border-top:1px solid #30363D;padding-top:12px"><span style="font-size:13px;color:#8B949E">Estimate</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:13px">{{ estimate }}</span></div>
+              </div>
+            </sc-if>
+          </div>
+          <button onClick="{{ run }}" style="appearance:none;border:0;cursor:pointer;background:#FF6B35;color:#0D1117;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:15px;font-weight:500;padding:14px 18px;border-radius:8px;display:flex;justify-content:space-between;align-items:center" style-hover="background:#E85A24"><span>Run analysis</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;opacity:.9">{{ estimate }}</span></button>
+          <span style="text-align:center;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;color:#8B949E">Demo mode · pre-computed run, replays instantly</span>
+        </aside>
+      </div>
+      <section style="display:flex;flex-direction:column;gap:12px">
+        <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Recent runs</span>
+        <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;overflow:hidden;display:flex;flex-direction:column">
+          <sc-for list="{{ recent }}" as="r" hint-placeholder-count="3">
+            <button onClick="{{ goDash }}" style="appearance:none;border:0;border-top:1px solid #30363D;background:transparent;cursor:pointer;display:grid;grid-template-columns:minmax(0,1.4fr) 110px minmax(0,1.6fr) 80px 60px;gap:16px;align-items:center;padding:12px 16px;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;color:#E6EDF3;text-align:left;margin-top:-1px" style-hover="background:#0D1117">
+              <span style="font-weight:500">{{ r.ds }} <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;color:#8B949E;font-weight:400">{{ r.run }}</span></span>
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">{{ r.date }}</span>
+              <span style="color:#8B949E">{{ r.stats }}</span>
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;text-align:right">{{ r.cost }}</span>
+              <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;text-align:right;color:#8B949E">{{ r.dur }}</span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isLive }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;padding:16px;display:flex">
+    <div style="flex:1;min-width:0;min-height:0;display:flex;flex-direction:column;background:#0A0D12;border-radius:12px;border:1px solid #21262D;color:#E9E9EE;overflow:hidden;position:relative">
+      <div style="flex:none;height:76px;display:flex;align-items:center;padding:0 24px;border-bottom:1px solid #21262D">
+        <sc-for list="{{ stages }}" as="s" hint-placeholder-count="5">
+          <div style="display:flex;align-items:center;flex:1;min-width:0">
+            <div style="display:flex;align-items:center;gap:10px;flex:none">
+              <svg width="18" height="18" style="display:block;flex:none;overflow:visible"><circle cx="9" cy="9" r="6" fill="{{ s.fill }}" opacity="{{ s.ringOp }}" style="transform-origin:9px 9px;transform-box:view-box;animation:dsPulse 1.4s ease-out infinite"></circle><circle cx="9" cy="9" r="6" fill="{{ s.fill }}" stroke="{{ s.stroke }}" style="stroke-width:1.5"></circle></svg>
+              <div style="display:flex;flex-direction:column;gap:2px">
+                <div style="display:flex;gap:8px;align-items:baseline"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">{{ s.k }}</span><span style="font-size:13px;font-weight:500;color:#F2F2F5">{{ s.name }}</span></div>
+                <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:{{ s.subColor }};white-space:nowrap">{{ s.sub }}</span>
+              </div>
+            </div>
+            <div style="flex:1;height:1px;margin:0 16px;background:{{ s.line }};min-width:12px"></div>
+          </div>
+        </sc-for>
+        <div style="flex:none;display:flex;align-items:center;gap:18px;padding-left:20px;border-left:1px solid #21262D">
+          <div style="display:flex;flex-direction:column;align-items:flex-end;gap:2px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">ELAPSED</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:22px;font-weight:500;line-height:1;color:#F2F2F5">{{ elapsed }}</span></div>
+          <sc-if value="{{ done }}" hint-placeholder-val="{{ false }}">
+            <button onClick="{{ goDash }}" style="appearance:none;border:0;cursor:pointer;background:#FF6B35;color:#0D1117;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:10px 16px;border-radius:8px;line-height:1.2;animation:dsUp .4s ease-out" style-hover="background:#E85A24">View results →</button>
+          </sc-if>
+        </div>
+      </div>
+
+      <div style="flex:1;min-height:0;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr)">
+        <div style="min-width:0;min-height:0;display:flex;flex-direction:column;border-right:1px solid #21262D">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">EXTRACTION STREAM · 1 ROW PER BATCH OF 20</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:#8A8F9C">batch {{ batchStr }} / 161</span></div>
+          <div style="flex:1;min-height:0;overflow:hidden;padding:0 20px 12px;display:flex;flex-direction:column;gap:8px">
+            <sc-for list="{{ rows }}" as="r" hint-placeholder-count="6">
+              <div style="flex:none;display:grid;grid-template-columns:minmax(0,1fr) 220px;gap:16px;padding:12px 14px;border:1px solid #21262D;border-radius:8px;background:#10151C;opacity:{{ r.op }};transform:translateY({{ r.ty }}px);transition:opacity .35s,transform .35s">
+                <div style="display:flex;flex-direction:column;gap:8px;min-width:0">
+                  <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:15px;line-height:1.5;color:#E9E9EE">{{ r.pre }}<mark style="background:#4A2414;color:#FFE4D9;padding:1px 4px;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone">{{ r.quote }}</mark>{{ r.post }}</p>
+                  <span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;line-height:1;color:#8B949E;border:1px solid #30363D;border-radius:999px;padding:4px 8px;background:#161B22">★ {{ r.rating }} · {{ r.date }} · {{ r.app }}</span>
+                </div>
+                <div style="display:flex;flex-direction:column;gap:8px;align-items:flex-start;min-width:0">
+                  <div style="display:flex;gap:10px;align-items:center">
+                    <span style="display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;line-height:1;color:#E9E9EE;border:1px solid #262C34;border-radius:999px;padding:4px 8px"><svg width="8" height="8" style="display:block"><circle cx="4" cy="4" r="4" fill="{{ r.sentColor }}"></circle></svg>{{ r.sentiment }}</span>
+                    <svg width="34" height="8" style="display:block"><rect x="0" y="0" width="5" height="8" rx="1" fill="{{ r.s1 }}"></rect><rect x="7" y="0" width="5" height="8" rx="1" fill="{{ r.s2 }}"></rect><rect x="14" y="0" width="5" height="8" rx="1" fill="{{ r.s3 }}"></rect><rect x="21" y="0" width="5" height="8" rx="1" fill="{{ r.s4 }}"></rect><rect x="28" y="0" width="5" height="8" rx="1" fill="{{ r.s5 }}"></rect></svg>
+                  </div>
+                  <div style="display:flex;flex-wrap:wrap;gap:6px">
+                    <sc-for list="{{ r.tags }}" as="g" hint-placeholder-count="1"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;line-height:1;color:#C9CBD3;background:#161B22;border:1px solid #262C34;border-radius:4px;padding:4px 6px">{{ g }}</span></sc-for>
+                  </div>
+                  <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:10px;color:#565E69">batch #{{ r.batch }}</span>
+                </div>
+              </div>
+            </sc-for>
+          </div>
+        </div>
+
+        <div style="min-width:0;min-height:0;display:flex;flex-direction:column;position:relative">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:12px 20px 8px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">THEME MAP · {{ mapTitle }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;color:#8A8F9C">size = mentions · color = sentiment</span></div>
+          <div style="flex:1;min-height:0;display:flex;align-items:center;justify-content:center;overflow:hidden">
+            <sc-if value="{{ isA }}" hint-placeholder-val="{{ true }}">
+              <svg width="640" height="600" style="display:block;overflow:visible">
+                <sc-for list="{{ pulses }}" as="p" hint-placeholder-count="0"><circle cx="{{ p.cx }}" cy="{{ p.cy }}" r="{{ p.r }}" fill="none" stroke="{{ p.fill }}" opacity="{{ p.op }}" style="stroke-width:1.5"></circle></sc-for>
+                <sc-for list="{{ nodesA }}" as="n" hint-placeholder-count="0">
+                  <g opacity="{{ n.op }}">
+                    <circle cx="{{ n.cx }}" cy="{{ n.cy }}" r="{{ n.glow }}" fill="{{ n.fill }}" opacity="0.10" style="transition:r .4s,cx .8s,cy .8s"></circle>
+                    <circle cx="{{ n.cx }}" cy="{{ n.cy }}" r="{{ n.r }}" fill="{{ n.fill }}" fill-opacity="{{ n.fillOp }}" stroke="{{ n.stroke }}" stroke-dasharray="{{ n.dash }}" style="stroke-width:1.5;transition:r .4s,cx .8s,cy .8s"></circle>
+                    <text x="{{ n.cx }}" y="{{ n.ly }}" fill="{{ n.tfill }}" style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:11px;font-weight:500;text-anchor:middle;transition:x .8s,y .8s">{{ n.short }}</text>
+                    <text x="{{ n.cx }}" y="{{ n.cy2 }}" fill="{{ n.tfill }}" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;text-anchor:middle;opacity:.8;transition:x .8s,y .8s">{{ n.c }}</text>
+                  </g>
+                </sc-for>
+              </svg>
+            </sc-if>
+            <sc-if value="{{ isB }}" hint-placeholder-val="{{ false }}">
+              <svg width="640" height="640" style="display:block;overflow:visible">
+                <sc-for list="{{ ticks }}" as="k" hint-placeholder-count="0"><line x1="{{ k.x }}" x2="{{ k.x }}" y1="18" y2="630" stroke="#21262D" style="stroke-dasharray:2 4"></line><text x="{{ k.x }}" y="10" fill="#565E69" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:middle">{{ k.v }}</text></sc-for>
+                <sc-for list="{{ nodesB }}" as="n" hint-placeholder-count="0">
+                  <g opacity="{{ n.op }}">
+                    <text x="180" y="{{ n.ty }}" fill="#C9CBD3" style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:11.5px;text-anchor:end;transition:y .5s">{{ n.name }}</text>
+                    <rect x="190" y="{{ n.ry }}" width="{{ n.w }}" height="18" rx="2" fill="{{ n.fill }}" fill-opacity="{{ n.fillOp }}" stroke="{{ n.stroke }}" stroke-dasharray="{{ n.dash }}" style="transition:y .5s,width .4s;stroke-width:1"></rect>
+                    <rect x="{{ n.px }}" y="{{ n.ry }}" width="3" height="18" fill="#FFFFFF" opacity="{{ n.pop }}" style="transition:x .4s"></rect>
+                    <text x="{{ n.cx }}" y="{{ n.ty }}" fill="#F2F2F5" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;transition:x .4s,y .5s">{{ n.c }}</text>
+                  </g>
+                </sc-for>
+              </svg>
+            </sc-if>
+            <sc-if value="{{ isC }}" hint-placeholder-val="{{ false }}">
+              <svg width="640" height="600" style="display:block;overflow:visible">
+                <sc-for list="{{ rings }}" as="g" hint-placeholder-count="0"><circle cx="320" cy="300" r="{{ g.r }}" fill="none" stroke="#21262D"></circle><text x="320" y="{{ g.ly }}" fill="#565E69" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;letter-spacing:.08em;text-anchor:middle">{{ g.l }}</text></sc-for>
+                <line x1="40" y1="300" x2="600" y2="300" stroke="#21262D" style="stroke-dasharray:2 4"></line><line x1="320" y1="20" x2="320" y2="580" stroke="#21262D" style="stroke-dasharray:2 4"></line>
+                <line x1="320" y1="300" x2="320" y2="40" stroke="#FF6B35" opacity="0.35" style="transform-origin:320px 300px;transform-box:view-box;animation:dsSweep 7s linear infinite"></line>
+                <sc-for list="{{ pulses }}" as="p" hint-placeholder-count="0"><circle cx="{{ p.cx }}" cy="{{ p.cy }}" r="{{ p.r }}" fill="none" stroke="{{ p.fill }}" opacity="{{ p.op }}" style="stroke-width:1.5"></circle></sc-for>
+                <sc-for list="{{ nodesC }}" as="n" hint-placeholder-count="0">
+                  <g opacity="{{ n.op }}">
+                    <circle cx="{{ n.cx }}" cy="{{ n.cy }}" r="{{ n.glow }}" fill="{{ n.fill }}" opacity="0.12" style="transition:r .4s,cx .8s,cy .8s"></circle>
+                    <circle cx="{{ n.cx }}" cy="{{ n.cy }}" r="{{ n.r }}" fill="{{ n.fill }}" fill-opacity="{{ n.fillOp }}" stroke="{{ n.stroke }}" stroke-dasharray="{{ n.dash }}" style="stroke-width:1.5;transition:r .4s,cx .8s,cy .8s"></circle>
+                    <text x="{{ n.cx }}" y="{{ n.ly }}" fill="#C9CBD3" style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:10.5px;text-anchor:middle;transition:x .8s,y .8s">{{ n.short }} <tspan fill="#8A8F9C" style="font-family:'IBM Plex Mono',ui-monospace,monospace">{{ n.c }}</tspan></text>
+                  </g>
+                </sc-for>
+              </svg>
+            </sc-if>
+          </div>
+        </div>
+      </div>
+
+      <sc-if value="{{ logOpen }}" hint-placeholder-val="{{ false }}">
+        <div style="position:absolute;left:0;right:0;bottom:60px;height:230px;background:#06080B;border-top:1px solid #21262D;display:flex;flex-direction:column;animation:dsUp .25s ease-out;box-shadow:0 -20px 40px rgba(0,0,0,.35)">
+          <div style="flex:none;display:flex;align-items:center;justify-content:space-between;padding:10px 20px;border-bottom:1px solid #21262D"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">AGENT LOG · {{ logCount }} ENTRIES</span><button onClick="{{ toggleLog }}" style="appearance:none;border:0;background:transparent;cursor:pointer;color:#8A8F9C;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px" style-hover="color:#F2F2F5">close ▾</button></div>
+          <div ref="{{ logRef }}" style="flex:1;min-height:0;overflow:auto;padding:10px 20px;display:flex;flex-direction:column;gap:6px">
+            <sc-for list="{{ log }}" as="e" hint-placeholder-count="0"><div style="display:flex;gap:16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;line-height:1.5"><span style="color:#565E69;flex:none">{{ e.ts }}</span><span style="color:#C9CBD3">{{ e.msg }}</span></div></sc-for>
+          </div>
+        </div>
+      </sc-if>
+
+      <div style="flex:none;height:60px;border-top:1px solid #21262D;display:flex;align-items:stretch;background:#06080B">
+        <sc-for list="{{ counters }}" as="c" hint-placeholder-count="6">
+          <div style="flex:1;min-width:0;display:flex;flex-direction:column;justify-content:center;gap:4px;padding:0 20px;border-right:1px solid #21262D"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;color:#8A8F9C">{{ c.k }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:18px;font-weight:500;line-height:1;color:#F2F2F5;white-space:nowrap">{{ c.v }} <span style="color:#8B949E;font-size:11px;font-weight:400">{{ c.u }}</span></span></div>
+        </sc-for>
+        <button onClick="{{ toggleLog }}" style="flex:none;width:380px;display:flex;align-items:center;gap:10px;padding:0 20px;background:transparent;border:0;color:#C9CBD3;cursor:pointer;text-align:left;font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;min-width:0" style-hover="background:#10151C"><svg width="8" height="8" style="display:block;flex:none"><circle cx="4" cy="4" r="3" fill="#FF6B35" style="animation:dsBlink 1.2s infinite"></circle></svg><span style="flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">{{ lastLog }}</span><span style="color:#8A8F9C;flex:none">{{ logToggleLabel }}</span></button>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isDash }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;position:relative;overflow:hidden;display:flex;flex-direction:column">
+    <div style="flex:1;min-height:0;overflow:auto;padding:26px 32px 32px;display:flex;flex-direction:column;gap:20px">
+      <div style="display:flex;align-items:flex-end;justify-content:space-between;gap:24px">
+        <div style="display:flex;flex-direction:column;gap:6px">
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Insights · Run #12</span>
+          <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:30px;line-height:1.15;letter-spacing:-0.01em">Fitness tracker app reviews</h1>
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">9 Sep 2026 · 3,214 items · IronLog · SetCount · LiftLab · 41s · $1.87</span>
+        </div>
+        <div style="display:flex;align-items:center;gap:0">
+          <div style="display:flex;flex-direction:column;gap:2px;padding:0 28px;border-left:1px solid #30363D"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:34px;font-weight:500;line-height:1;letter-spacing:-0.02em">14</span><span style="font-size:12px;color:#8B949E">themes</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px;padding:0 28px;border-left:1px solid #30363D"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:34px;font-weight:500;line-height:1;letter-spacing:-0.02em">6</span><span style="font-size:12px;color:#8B949E">opportunities</span></div>
+          <div style="display:flex;flex-direction:column;gap:2px;padding:0 28px;border-left:1px solid #30363D;position:relative"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:34px;font-weight:500;line-height:1;letter-spacing:-0.02em">91%</span><span style="font-size:12px;color:#8B949E;display:flex;align-items:center;gap:5px">extraction precision<button onMouseEnter="{{ tipOn }}" onMouseLeave="{{ tipOff }}" style="appearance:none;cursor:help;width:15px;height:15px;border-radius:50%;border:1px solid #484F58;background:#161B22;color:#8B949E;font-family:'Source Serif 4',Georgia,serif;font-style:italic;font-size:10px;line-height:1;padding:0;display:inline-flex;align-items:center;justify-content:center">i</button></span>
+            <sc-if value="{{ tip }}" hint-placeholder-val="{{ false }}"><div style="position:absolute;top:100%;right:0;margin-top:8px;width:250px;background:#E6EDF3;color:#0D1117;font-size:12px;line-height:1.5;padding:10px 12px;border-radius:8px;z-index:5;box-shadow:0 8px 24px rgba(0,0,0,.5)">Share of extracted theme labels that match a hand-labelled 50-item golden set. Recall 87%. See the Trust panel in the brief.</div></sc-if>
+          </div>
+          <button onClick="{{ noop }}" style="appearance:none;cursor:pointer;background:#161B22;color:#E6EDF3;border:1px solid #30363D;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:9px 14px;border-radius:8px;line-height:1.2;margin-left:20px" style-hover="background:#0D1117">Open brief</button>
+        </div>
+      </div>
+      <div style="display:flex;gap:8px;align-items:center">
+        <sc-for list="{{ filters }}" as="f" hint-placeholder-count="4"><button style="appearance:none;cursor:pointer;display:inline-flex;align-items:center;gap:8px;background:#161B22;color:#E6EDF3;border:1px solid #30363D;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;padding:6px 10px;border-radius:999px" style-hover="border-color:#E6EDF3"><span style="color:#8B949E">{{ f.k }}</span>{{ f.v }}<svg width="8" height="5" style="display:block"><polyline points="0,0 4,4 8,0" fill="none" stroke="#8B949E" style="stroke-width:1.2"></polyline></svg></button></sc-for>
+        <div style="flex:1"></div>
+        <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">Showing all 3,214 items · click a row for evidence</span>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 420px;gap:20px;align-items:start">
+        <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;overflow:hidden">
+          <table style="width:100%;border-collapse:collapse;font-size:13px">
+            <thead><tr>
+              <th style="text-align:left;padding:10px 8px 10px 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">#</th>
+              <th style="text-align:left;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Theme</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Mentions</th>
+              <th style="text-align:right;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Share</th>
+              <th style="text-align:left;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Sentiment</th>
+              <th style="text-align:left;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Severity</th>
+              <th style="text-align:left;padding:10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Trend</th>
+              <th style="text-align:left;padding:10px 16px 10px 12px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-weight:400;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Opportunity</th>
+            </tr></thead>
+            <tbody>
+              <sc-for list="{{ table }}" as="t" hint-placeholder-count="14">
+                <tr onClick="{{ t.open }}" style="cursor:pointer;background:{{ t.bg }};border-top:1px solid #30363D;transition:background .15s" style-hover="background:#0D1117">
+                  <td style="padding:10px 8px 10px 16px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">{{ t.rank }}</td>
+                  <td style="padding:10px 12px;font-weight:500;white-space:nowrap">{{ t.n }}</td>
+                  <td style="padding:10px 12px;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:13px">{{ t.cStr }}</td>
+                  <td style="padding:10px 12px;text-align:right;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;color:#8B949E">{{ t.share }}</td>
+                  <td style="padding:10px 12px"><svg width="120" height="6" style="display:block"><rect x="0" y="0" width="120" height="6" rx="1" fill="#30363D"></rect><rect x="0" y="0" width="{{ t.wPos }}" height="6" fill="#2F9E6E"></rect><rect x="{{ t.xNeu }}" y="0" width="{{ t.wNeu }}" height="6" fill="#8A8F9C"></rect><rect x="{{ t.xNeg }}" y="0" width="{{ t.wNeg }}" height="6" fill="#D64545"></rect></svg></td>
+                  <td style="padding:10px 12px"><div style="display:flex;align-items:center;gap:8px"><svg width="34" height="8" style="display:block"><rect x="0" y="0" width="5" height="8" rx="1" fill="{{ t.s1 }}"></rect><rect x="7" y="0" width="5" height="8" rx="1" fill="{{ t.s2 }}"></rect><rect x="14" y="0" width="5" height="8" rx="1" fill="{{ t.s3 }}"></rect><rect x="21" y="0" width="5" height="8" rx="1" fill="{{ t.s4 }}"></rect><rect x="28" y="0" width="5" height="8" rx="1" fill="{{ t.s5 }}"></rect></svg><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px">{{ t.sev }}</span></div></td>
+                  <td style="padding:10px 12px"><svg width="72" height="20" style="display:block"><polyline points="{{ t.spark }}" fill="none" stroke="#8B949E" style="stroke-width:1.5;stroke-linejoin:round"></polyline></svg></td>
+                  <td style="padding:8px 16px 8px 12px"><sc-if value="{{ t.hasOpp }}" hint-placeholder-val="{{ false }}"><button onClick="{{ t.openOpp }}" style="appearance:none;border:0;cursor:pointer;display:inline-flex;align-items:center;gap:6px;background:#3A1F14;color:#FF6B35;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:12px;font-weight:500;padding:4px 8px;border-radius:6px" style-hover="background:#FF6B35;color:#0D1117">→ {{ t.oppScore }}</button></sc-if></td>
+                </tr>
+              </sc-for>
+            </tbody>
+          </table>
+        </div>
+        <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:18px 20px 12px;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:baseline"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Impact matrix</span><span style="font-size:12px;color:#8B949E">frequency × severity</span></div>
+          <svg width="378" height="330" style="display:block;overflow:visible">
+            <rect x="187" y="16" width="179" height="140" fill="#3A1F14" opacity="0.6"></rect>
+            <text x="360" y="32" fill="#FF6B35" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-anchor:end">OPPORTUNITIES</text>
+            <line x1="44" y1="16" x2="44" y2="296" stroke="#30363D"></line><line x1="44" y1="296" x2="366" y2="296" stroke="#30363D"></line>
+            <line x1="187" y1="16" x2="187" y2="296" stroke="#30363D" style="stroke-dasharray:3 3"></line><line x1="44" y1="156" x2="366" y2="156" stroke="#30363D" style="stroke-dasharray:3 3"></line>
+            <text x="38" y="20" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:end">5</text><text x="38" y="159" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:end">3</text><text x="38" y="299" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:end">1</text>
+            <text x="44" y="312" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px">0</text><text x="187" y="312" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:middle">200</text><text x="366" y="312" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:end">450 mentions</text>
+            <text x="14" y="160" fill="#8B949E" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:9px;text-anchor:middle;transform:rotate(-90deg);transform-origin:14px 160px">severity</text>
+            <sc-for list="{{ dots }}" as="d" hint-placeholder-count="0">
+              <circle cx="{{ d.cx }}" cy="{{ d.cy }}" r="{{ d.r }}" fill="{{ d.fill }}" opacity="0.85" stroke="#161B22" style="stroke-width:1.5"></circle>
+              <text x="{{ d.lx }}" y="{{ d.ly }}" fill="#E6EDF3" opacity="{{ d.lop }}" style="font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:10.5px">{{ d.label }}</text>
+            </sc-for>
+          </svg>
+          <div style="display:flex;gap:14px;font-size:11px;color:#8B949E;padding-top:4px;border-top:1px solid #30363D">
+            <span style="display:inline-flex;align-items:center;gap:5px"><svg width="8" height="8" style="display:block"><circle cx="4" cy="4" r="4" fill="#D64545"></circle></svg>negative</span>
+            <span style="display:inline-flex;align-items:center;gap:5px"><svg width="8" height="8" style="display:block"><circle cx="4" cy="4" r="4" fill="#8A8F9C"></circle></svg>neutral / mixed</span>
+            <span style="display:inline-flex;align-items:center;gap:5px"><svg width="8" height="8" style="display:block"><circle cx="4" cy="4" r="4" fill="#2F9E6E"></circle></svg>positive</span>
+            <span style="margin-left:auto">dot size = mentions</span>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <sc-if value="{{ drawerOpen }}" hint-placeholder-val="{{ false }}">
+      <aside style="position:absolute;top:0;right:0;bottom:0;width:480px;background:#161B22;border-left:1px solid #30363D;box-shadow:-16px 0 40px rgba(0,0,0,.5);display:flex;flex-direction:column;animation:dsSlideIn .28s cubic-bezier(.2,.7,.2,1);z-index:4">
+        <div style="padding:22px 24px 16px;border-bottom:1px solid #30363D;display:flex;flex-direction:column;gap:10px">
+          <div style="display:flex;justify-content:space-between;align-items:center"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Theme {{ d.rank }} · {{ d.cStr }} mentions · {{ d.share }}</span><button onClick="{{ closeDrawer }}" style="appearance:none;border:0;background:transparent;cursor:pointer;color:#8B949E;font-size:16px;line-height:1;padding:4px" style-hover="color:#E6EDF3">✕</button></div>
+          <h2 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:22px;line-height:1.2;letter-spacing:-0.01em;text-wrap:pretty">{{ d.n }}</h2>
+          <div style="display:flex;align-items:center;gap:12px"><svg width="200" height="6" style="display:block"><rect x="0" y="0" width="200" height="6" rx="1" fill="#30363D"></rect><rect x="0" y="0" width="{{ d.wPos }}" height="6" fill="#2F9E6E"></rect><rect x="{{ d.xNeu }}" y="0" width="{{ d.wNeu }}" height="6" fill="#8A8F9C"></rect><rect x="{{ d.xNeg }}" y="0" width="{{ d.wNeg }}" height="6" fill="#D64545"></rect></svg><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:#8B949E">{{ d.splitStr }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:#8B949E;margin-left:auto">sev {{ d.sev }}</span></div>
+        </div>
+        <div style="flex:1;min-height:0;overflow:auto;padding:18px 24px 24px;display:flex;flex-direction:column;gap:22px">
+          <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:#8B949E">Source reviews · showing {{ d.qn }} of {{ d.cStr }} · sorted by severity</span>
+          <sc-for list="{{ dQuotes }}" as="q" hint-placeholder-count="3">
+            <div style="display:flex;flex-direction:column;gap:8px">
+              <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:16px;line-height:1.5;color:#E6EDF3">{{ q.pre }}<mark style="background:#4A2414;color:#FFE4D9;padding:1px 4px;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone">{{ q.quote }}</mark>{{ q.post }}</p>
+              <div style="display:flex;align-items:center;gap:12px"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;line-height:1;color:#8B949E;border:1px solid #30363D;border-radius:999px;padding:4px 8px;background:#161B22">★ {{ q.rating }} · {{ q.date }} · {{ q.app }}</span><a href="#" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;text-decoration:none">Open original ↗</a></div>
+            </div>
+          </sc-for>
+        </div>
+        <sc-if value="{{ d.hasOpp }}" hint-placeholder-val="{{ false }}">
+          <div style="flex:none;padding:14px 24px;border-top:1px solid #30363D;display:flex;justify-content:space-between;align-items:center;background:#0D1117"><span style="font-size:12px;color:#8B949E">Rolled up into an opportunity</span><button onClick="{{ d.openOpp }}" style="appearance:none;border:0;cursor:pointer;background:#FF6B35;color:#0D1117;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:9px 14px;border-radius:8px;line-height:1.2" style-hover="background:#E85A24">View opportunity · {{ d.oppScore }} →</button></div>
+        </sc-if>
+      </aside>
+    </sc-if>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ isOpp }}" hint-placeholder-val="{{ false }}">
+  <div style="flex:1;min-height:0;overflow:auto;position:relative">
+    <div style="max-width:1200px;margin:0 auto;padding:22px 32px 56px;display:flex;flex-direction:column;gap:22px">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <button onClick="{{ goDash }}" style="appearance:none;border:0;background:transparent;cursor:pointer;color:#8B949E;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:6px 0" style-hover="color:#E6EDF3">← Dashboard</button>
+        <div style="display:flex;gap:8px">
+          <button onClick="{{ addBrief }}" style="appearance:none;cursor:pointer;background:#FF6B35;color:#0D1117;border:0;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:9px 14px;border-radius:8px;line-height:1.2" style-hover="background:#E85A24">Add to brief</button>
+          <button onClick="{{ copyMd }}" style="appearance:none;cursor:pointer;background:#161B22;color:#E6EDF3;border:1px solid #30363D;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:9px 14px;border-radius:8px;line-height:1.2" style-hover="background:#0D1117">Copy as markdown</button>
+          <button onClick="{{ dismiss }}" style="appearance:none;cursor:pointer;background:transparent;color:#8B949E;border:0;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:13px;font-weight:500;padding:9px 10px;border-radius:8px;line-height:1.2" style-hover="color:#E6EDF3">Dismiss</button>
+        </div>
+      </div>
+      <div style="display:grid;grid-template-columns:minmax(0,1fr) 340px;gap:44px;align-items:start">
+        <main style="display:flex;flex-direction:column;gap:30px;min-width:0">
+          <header style="display:flex;flex-direction:column;gap:12px">
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Opportunity {{ o.num }} of 06 · Run #12 · Fitness tracker app reviews</span>
+            <h1 style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-weight:600;font-size:38px;line-height:1.1;letter-spacing:-0.015em;text-wrap:pretty">{{ o.title }}</h1>
+            <p style="margin:0;font-size:17px;line-height:1.5;color:#E6EDF3;text-wrap:pretty">{{ o.problem }}</p>
+          </header>
+          <section style="display:flex;flex-direction:column;gap:16px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;border-bottom:1px solid #30363D;padding-bottom:8px"><h3 style="margin:0;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#8B949E">Evidence</h3><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;color:#8B949E">{{ o.qn }} of {{ o.cStr }} source reviews · every claim maps to an item ID</span></div>
+            <div style="display:flex;flex-direction:column;gap:20px">
+              <sc-for list="{{ oQuotes }}" as="q" hint-placeholder-count="6">
+                <div style="display:flex;flex-direction:column;gap:8px">
+                  <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:16px;line-height:1.5;color:#E6EDF3">{{ q.pre }}<mark style="background:#4A2414;color:#FFE4D9;padding:1px 4px;border-radius:3px;-webkit-box-decoration-break:clone;box-decoration-break:clone">{{ q.quote }}</mark>{{ q.post }}</p>
+                  <div style="display:flex;align-items:center;gap:12px"><span style="align-self:flex-start;display:inline-flex;align-items:center;gap:6px;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px;line-height:1;color:#8B949E;border:1px solid #30363D;border-radius:999px;padding:4px 8px;background:#161B22">★ {{ q.rating }} · {{ q.date }} · {{ q.app }}</span><a href="#" style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:11px;text-decoration:none">Open original ↗</a></div>
+                </div>
+              </sc-for>
+            </div>
+          </section>
+          <section style="display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#8B949E;border-bottom:1px solid #30363D;padding-bottom:8px">Proposed direction</h3>
+            <p style="margin:0;font-family:'Source Serif 4',Georgia,serif;font-size:18px;line-height:1.55;text-wrap:pretty">{{ o.direction }}</p>
+          </section>
+          <section style="display:flex;flex-direction:column;gap:10px">
+            <h3 style="margin:0;font-size:12px;font-weight:500;text-transform:uppercase;letter-spacing:.06em;color:#8B949E;border-bottom:1px solid #30363D;padding-bottom:8px">What we'd need to validate</h3>
+            <ol style="margin:0;padding-left:22px;display:flex;flex-direction:column;gap:6px;font-size:15px;line-height:1.5">
+              <sc-for list="{{ o.validate }}" as="v" hint-placeholder-count="3"><li style="text-wrap:pretty">{{ v }}</li></sc-for>
+            </ol>
+          </section>
+        </main>
+        <aside style="display:flex;flex-direction:column;gap:14px">
+          <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:14px">
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Opportunity score</span>
+            <div style="display:flex;align-items:baseline;gap:8px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:56px;font-weight:500;line-height:1;letter-spacing:-0.03em">{{ o.score }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:13px;color:#8B949E">/ 100 · rank {{ o.num }}</span></div>
+            <div style="display:flex;flex-direction:column;gap:12px;padding-top:4px">
+              <sc-for list="{{ o.factors }}" as="f" hint-placeholder-count="4">
+                <div style="display:flex;flex-direction:column;gap:5px">
+                  <div style="display:flex;justify-content:space-between;font-size:12px"><span style="font-weight:500">{{ f.name }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums">{{ f.val }}</span></div>
+                  <svg width="100%" height="4" style="display:block"><rect x="0" y="0" width="100%" height="4" rx="2" fill="#30363D"></rect><rect x="0" y="0" width="{{ f.w }}" height="4" rx="2" fill="#E6EDF3"></rect></svg>
+                  <span style="font-size:11px;color:#8B949E">{{ f.note }}</span>
+                </div>
+              </sc-for>
+            </div>
+            <div style="display:flex;align-items:center;gap:8px;border-top:1px solid #30363D;padding-top:12px;font-size:12px"><svg width="22" height="8" style="display:block"><rect x="0" y="0" width="6" height="8" rx="1" fill="#2F9E6E"></rect><rect x="8" y="0" width="6" height="8" rx="1" fill="#2F9E6E"></rect><rect x="16" y="0" width="6" height="8" rx="1" fill="{{ o.conf3 }}"></rect></svg><span style="font-weight:500">Confidence: {{ o.conf }}</span><span style="color:#8B949E;margin-left:auto;font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums;font-size:11px">{{ o.cStr }} items · 91% precision</span></div>
+          </div>
+          <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Who's affected · share of this theme's feedback</span>
+            <sc-for list="{{ o.segments }}" as="s" hint-placeholder-count="3">
+              <div style="display:flex;flex-direction:column;gap:5px"><div style="display:flex;justify-content:space-between;font-size:13px"><span>{{ s.n }}</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-variant-numeric:tabular-nums">{{ s.v }}</span></div><svg width="100%" height="4" style="display:block"><rect x="0" y="0" width="100%" height="4" rx="2" fill="#30363D"></rect><rect x="0" y="0" width="{{ s.w }}" height="4" rx="2" fill="#FF6B35"></rect></svg></div>
+            </sc-for>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:16px 20px;display:flex;flex-direction:column;gap:6px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Effort</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:26px;font-weight:500;line-height:1">{{ o.effort }}</span></div>
+            <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:16px 20px;display:flex;flex-direction:column;gap:6px"><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Impact</span><span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:26px;font-weight:500;line-height:1">{{ o.impact }}</span></div>
+          </div>
+          <div style="background:#161B22;border:1px solid #30363D;border-radius:10px;padding:20px;display:flex;flex-direction:column;gap:12px">
+            <span style="font-family:'IBM Plex Mono',ui-monospace,monospace;font-size:10px;letter-spacing:.08em;text-transform:uppercase;color:#8B949E">Related themes</span>
+            <div style="display:flex;flex-wrap:wrap;gap:6px">
+              <sc-for list="{{ o.related }}" as="r" hint-placeholder-count="3"><button onClick="{{ r.open }}" style="appearance:none;cursor:pointer;background:#0D1117;color:#E6EDF3;border:1px solid #30363D;font-family:'IBM Plex Sans',system-ui,sans-serif;font-size:12px;padding:5px 10px;border-radius:999px;text-align:left" style-hover="border-color:#E6EDF3">{{ r.n }}</button></sc-for>
+            </div>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+  </sc-if>
+
+  <sc-if value="{{ toastOn }}" hint-placeholder-val="{{ false }}">
+    <div style="position:absolute;left:50%;bottom:28px;transform:translateX(-50%);display:flex;align-items:center;gap:10px;background:#E6EDF3;color:#0D1117;padding:11px 16px;border-radius:8px;font-size:13px;box-shadow:0 12px 32px rgba(21,21,23,.25);animation:dsToast .25s ease-out;z-index:9"><svg width="14" height="14" style="display:block"><circle cx="7" cy="7" r="7" fill="#2F9E6E"></circle><polyline points="4,7 6.3,9.3 10.2,5" fill="none" stroke="#161B22" style="stroke-width:1.6;stroke-linecap:round;stroke-linejoin:round"></polyline></svg>{{ toast }}</div>
+  </sc-if>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props="{&quot;screen&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;home&quot;,&quot;live&quot;,&quot;dashboard&quot;,&quot;opportunity&quot;],&quot;default&quot;:&quot;home&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;speed&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[1,2,4],&quot;default&quot;:1,&quot;tsType&quot;:&quot;number&quot;,&quot;section&quot;:&quot;Live run&quot;,&quot;unit&quot;:&quot;×&quot;},&quot;liveState&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;run&quot;,&quot;mid&quot;,&quot;done&quot;],&quot;default&quot;:&quot;run&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Live run&quot;},&quot;mapVariant&quot;:{&quot;editor&quot;:&quot;enum&quot;,&quot;options&quot;:[&quot;constellation&quot;,&quot;spectrum&quot;,&quot;radar&quot;],&quot;default&quot;:&quot;constellation&quot;,&quot;tsType&quot;:&quot;string&quot;,&quot;section&quot;:&quot;Live run&quot;},&quot;logOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Live run&quot;},&quot;demoBanner&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:true,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Prototype&quot;},&quot;drawerOpen&quot;:{&quot;editor&quot;:&quot;boolean&quot;,&quot;default&quot;:false,&quot;tsType&quot;:&quot;boolean&quot;,&quot;section&quot;:&quot;Dashboard&quot;},&quot;height&quot;:{&quot;editor&quot;:null,&quot;default&quot;:&quot;100vh&quot;,&quot;tsType&quot;:&quot;string&quot;}}">
+const SENT={negative:'#D64545',positive:'#2F9E6E',neutral:'#8A8F9C',mixed:'#8A8F9C'};
+const THEMES=[
+{n:'Rest timer unreliable in background',sh:'Rest timer',c:412,s:'negative',sev:4,sa:4.1,disc:40,sp:[6,12,82],tr:[3,3,4,4,5,6,7,8]},
+{n:'Apple Watch sync drops sets',sh:'Watch sync',c:388,s:'negative',sev:4,sa:3.9,disc:60,sp:[5,10,85],tr:[2,3,3,5,6,6,7,7]},
+{n:'Subscription price vs. value',sh:'Subscription',c:351,s:'mixed',sev:3,sa:3.0,disc:120,sp:[34,22,44],tr:[4,4,5,5,6,6,6,7]},
+{n:'Import from other trackers is missing',sh:'Import',c:297,s:'negative',sev:3,sa:3.2,disc:150,sp:[4,18,78],tr:[5,5,5,5,5,6,5,6]},
+{n:'Plate calculator loved',sh:'Plate calc',c:240,s:'positive',sev:1,sa:1.3,disc:200,sp:[88,9,3],tr:[3,4,4,5,5,5,6,6]},
+{n:'Wants superset / circuit support',sh:'Supersets',c:221,s:'negative',sev:2,sa:2.2,disc:260,sp:[10,30,60],tr:[3,3,4,4,4,5,5,5]},
+{n:'Exercise library gaps (cables, machines)',sh:'Library gaps',c:198,s:'negative',sev:3,sa:2.9,disc:330,sp:[8,32,60],tr:[4,4,4,4,5,5,5,5]},
+{n:'Progress charts praised',sh:'Charts',c:176,s:'positive',sev:1,sa:1.2,disc:1950,sp:[84,12,4],tr:[3,3,4,4,4,5,5,5]},
+{n:'Crashes on iOS 18 beta',sh:'iOS 18 crashes',c:143,s:'negative',sev:5,sa:4.8,disc:2000,sp:[1,4,95],tr:[0,0,0,0,1,2,6,9]},
+{n:'Dark mode requests',sh:'Dark mode',c:120,s:'neutral',sev:2,sa:1.9,disc:2100,sp:[20,60,20],tr:[2,2,3,3,3,3,4,4]},
+{n:'Onboarding too long',sh:'Onboarding',c:97,s:'negative',sev:2,sa:2.4,disc:2300,sp:[5,25,70],tr:[3,3,3,3,3,3,3,3]},
+{n:'Wants coach / program sharing',sh:'Coach sharing',c:88,s:'neutral',sev:2,sa:2.1,disc:2500,sp:[30,55,15],tr:[2,2,2,3,3,3,3,4]},
+{n:'Widget requests',sh:'Widgets',c:61,s:'neutral',sev:1,sa:1.5,disc:2800,sp:[25,60,15],tr:[1,1,2,2,2,2,3,3]},
+{n:'Other / uncategorized',sh:'Other',c:422,s:'neutral',sev:2,sa:2.0,disc:30,sp:[40,40,20],tr:[5,5,5,5,5,5,5,5],other:true}];
+const TRANS=[{n:'timer bugs',c:60,parent:0,disc:540,mergeT:31.2},{n:'watch disconnects',c:45,parent:1,disc:820,mergeT:32.0},{n:'too expensive',c:50,parent:2,disc:1040,mergeT:33.1}];
+const R=(app,rating,date,pre,q,post,s,th,sev)=>({app,rating,date,pre,q,post,s,th,sev});
+const REVIEWS=[
+R('IronLog',2,'14 Mar 2026','Great logging but ','the rest timer just stops counting the second I lock my phone','. Missed my 3-minute rest twice.','negative',[0],4),
+R('SetCount',1,'2 Jun 2026','','Lost an entire leg day because the Watch dropped half my sets on sync','. Not the first time.','negative',[1],4),
+R('LiftLab',3,'21 Nov 2025','Solid app. ','$79 a year feels steep when the free version already does 80% of what I need','.','mixed',[2],3),
+R('IronLog',2,'8 Jan 2026','','Two years of Strong data and no way to import it','. Starting from zero is a dealbreaker.','negative',[3],3),
+R('SetCount',5,'30 Aug 2026','','The plate calculator alone is worth the download',', saves me doing math between sets.','positive',[4],1),
+R('LiftLab',3,'17 Feb 2026','Wish I could ','group exercises into a superset instead of logging them as separate blocks','.','negative',[5],2),
+R('IronLog',3,'5 Oct 2025','','Half the cable machines at my gym aren\u2019t in the library',' so I end up with a dozen custom entries.','negative',[6],3),
+R('SetCount',5,'12 Jul 2026','','The progress charts finally made my plateau obvious','. Deloaded, back to PRs.','positive',[7],1),
+R('LiftLab',1,'26 Aug 2026','','Crashes on launch since the iOS 18 beta',', every single time.','negative',[8],5),
+R('IronLog',4,'9 Dec 2025','Love it, but ','please add a dark mode, the white screen at 6am is brutal','.','neutral',[9],2),
+R('SetCount',2,'3 May 2026','','The rest timer notification never fires when the app is in the background','. Have to keep the screen on.','negative',[0],4),
+R('LiftLab',2,'19 Apr 2026','','Sets logged on the Watch show up on the phone minutes later, or not at all','.','negative',[1],4),
+R('IronLog',3,'28 Sep 2025','','Fifteen onboarding screens before I could log a single set',' is too many.','negative',[10],2),
+R('SetCount',4,'15 Jan 2026','Would pay extra if ','my coach could push a program straight into the app','.','neutral',[11],2),
+R('LiftLab',4,'7 Aug 2026','','A lock-screen widget for the current set would be perfect','.','neutral',[12],1),
+R('IronLog',1,'22 Jun 2026','','Paying monthly and the timer still resets itself in the background','. Fix the basics first.','negative',[0,2],4),
+R('SetCount',5,'11 Nov 2025','','Plate math done for me',', tiny feature, huge quality of life.','positive',[4],1),
+R('LiftLab',2,'4 Mar 2026','','Import from Hevy failed on every CSV I tried','.','negative',[3],3),
+R('IronLog',3,'16 May 2026','','Circuits are impossible to log',' without the rest timer going off between every movement.','negative',[5,0],2),
+R('SetCount',4,'1 Feb 2026','Good app overall. ','Charts are clean and the trend line is honest','.','positive',[7],1),
+R('LiftLab',2,'24 Jul 2026','','Watch app lost connection mid-set three times today','.','negative',[1],4),
+R('IronLog',5,'13 Oct 2025','Been using it a year. ','Worth every cent of the subscription','.','positive',[2],1),
+R('SetCount',3,'27 Dec 2025','','No Smith machine variants in the exercise list','.','negative',[6],3),
+R('LiftLab',4,'18 Aug 2026','Nice update. ','Still no way to share a program with my training partner','.','neutral',[11],2),
+R('SetCount',2,'6 Apr 2026','','Timer dies if I switch to Spotify for ten seconds','.','negative',[0],4),
+R('IronLog',1,'29 Jul 2026','','Rest timer is the whole reason I use an app and it can\u2019t survive a screen lock','.','negative',[0],4)];
+const OPPS=[
+{title:'Make the rest timer bulletproof in the background',problem:'Paying users lose rest-timer accuracy the moment the phone locks or another app comes to the foreground. 412 reviews (12.8%) cite it, average severity 4.1, and the share is rising.',score:92,th:0,f:[['Frequency','0.94','412 mentions · ranked #1 of 14'],['Severity','0.80','avg. 4.1 / 5'],['Recency','0.88','rising in 3 of the last 4 months'],['Strategic fit','0.92','matches "fix before the annual-pricing push"']],conf:'High',segs:[['iOS',71],['Paid subscribers',63],['Apple Watch owners',44]],direction:'Move the timer off the foreground process: schedule a local notification at set start and reconcile on resume instead of counting in-app. Surface the remaining time on the lock screen as a Live Activity so users stop keeping the screen on.',validate:['Share of timer complaints that are background-specific vs. notification-permission issues','Whether Live Activities are viable on the minimum supported iOS version','Effect on battery complaints, currently 1.1% of reviews'],effort:'M',impact:'XL',related:[5,1,2],ev:[0,10,15,18,24,25]},
+{title:'Fix Watch set-sync reliability',problem:'Sets logged on Apple Watch arrive on the phone late or never. 388 reviews (12.1%), average severity 3.9, concentrated in SetCount and LiftLab.',score:89,th:1,f:[['Frequency','0.90','388 mentions · ranked #2 of 14'],['Severity','0.78','avg. 3.9 / 5'],['Recency','0.84','steady over 14 months'],['Strategic fit','0.90','Watch is the paid differentiator']],conf:'High',segs:[['Apple Watch owners',100],['Paid subscribers',58],['iOS 17+',82]],direction:'Make the Watch the source of truth during a session and reconcile to the phone with an explicit sync state, so a dropped connection queues sets instead of losing them.',validate:['Whether drops correlate with watchOS version or with phone-locked state','How many affected users are on the paid tier'],effort:'L',impact:'L',related:[0,8],ev:[1,11,20]},
+{title:'One-tap import from competitors',problem:'Switchers arrive with years of history and no way to bring it. 297 reviews (9.2%), severity 3.2, most common in 1–2 star reviews.',score:81,th:3,f:[['Frequency','0.82','297 mentions · ranked #4 of 14'],['Severity','0.64','avg. 3.2 / 5'],['Recency','0.72','flat'],['Strategic fit','0.95','blocks new paid sign-ups']],conf:'High',segs:[['New users (< 30 days)',68],['Named a competitor',54],['Paid subscribers',22]],direction:'Ship CSV import mapped from the three most-named trackers, with a preview step that shows how many workouts were matched before committing.',validate:['Which competitors are named most often','Whether their export formats are stable enough to maintain'],effort:'M',impact:'L',related:[2],ev:[3,17]},
+{title:'Supersets and circuits',problem:'Users can\u2019t log grouped movements; they log separate blocks and fight the rest timer. 221 reviews (6.9%), severity 2.2.',score:74,th:5,f:[['Frequency','0.62','221 mentions · ranked #6 of 14'],['Severity','0.44','avg. 2.2 / 5'],['Recency','0.70','rising slowly'],['Strategic fit','0.80','retention feature for intermediate lifters']],conf:'Medium',segs:[['Intermediate+ lifters',61],['iOS',74],['Paid subscribers',49]],direction:'Add a grouping primitive at set level (superset / circuit) with a shared rest timer. The logging UI stays the same; the timer just knows which set is next.',validate:['Whether users want a shared rest timer or per-exercise timers','Overlap with the rest-timer opportunity'],effort:'M',impact:'M',related:[0,6],ev:[5,18]},
+{title:'Re-tier the subscription',problem:'Price is questioned more than the product. 351 reviews (10.9%) mention it, split 34% positive / 44% negative.',score:70,th:2,f:[['Frequency','0.86','351 mentions · ranked #3 of 14'],['Severity','0.60','avg. 3.0 / 5'],['Recency','0.66','spikes at renewal months'],['Strategic fit','0.70','direct input to the pricing push']],conf:'Medium',segs:[['Free-tier users',58],['3-star reviews',47],['Paid subscribers',42]],direction:'Move plate calculator and charts into the free tier, keep Watch sync and import paid, and test a monthly price point below the current one.',validate:['Which features free-tier users mention as blocked','Churn timing relative to the annual renewal'],effort:'S',impact:'L',related:[4,7,3],ev:[2,21,15]},
+{title:'Cable and machine library expansion',problem:'Gym equipment isn\u2019t in the library, so users create custom entries that break their charts. 198 reviews (6.2%), severity 2.9.',score:58,th:6,f:[['Frequency','0.55','198 mentions · ranked #7 of 14'],['Severity','0.58','avg. 2.9 / 5'],['Recency','0.52','flat'],['Strategic fit','0.65','quality-of-life, not a driver']],conf:'Medium',segs:[['Commercial gym members',77],['iOS',69],['Paid subscribers',51]],direction:'Add the top 60 missing cable and machine variants and merge existing custom entries into them by name.',validate:['Which custom entries recur across users','Whether charts survive the merge'],effort:'S',impact:'M',related:[7,5],ev:[6,22]}];
+const LOG=[[0.4,'Parsed 3,214 rows from fitness-tracker-reviews.csv · 3 apps · 14 months'],[1.2,'Normalized dates and ratings · 0 rows dropped'],[1.9,'Sampling 200 reviews to draft a taxonomy…'],[3.6,'Drafted taxonomy: 9 candidate themes + other'],[4.2,'Extracting in batches of 20 · 161 batches · taxonomy prompt cached'],[6.8,'Cache warm · hit rate 41% and climbing'],[9.9,"Batch 27 proposed a label outside the taxonomy: 'timer bugs' · keeping as raw"],[12.9,"Batch 41 proposed 'watch disconnects' · keeping as raw"],[15.3,"Batch 52 proposed 'too expensive' · keeping as raw"],[20.3,'1,500 processed · 11 raw themes · $0.91 so far'],[23.7,'Batch 92 done · cache hit rate 78%'],[24.5,"New theme from batch 98: 'Progress charts praised'"],[24.9,"New theme from batch 100: 'Crashes on iOS 18 beta' · severity 5 flagged"],[25.2,"New theme: 'Dark mode requests'"],[26.1,"New theme: 'Onboarding too long'"],[27.0,"New theme: 'Wants coach / program sharing'"],[28.3,"New theme: 'Widget requests'"],[30.0,'Extraction complete · 3,214 / 3,214 · 0 failures · 2 retries'],[30.5,'Consolidating 17 raw themes…'],[31.2,"Merged 'timer bugs' into 'Rest timer unreliable in background' (0.91 similarity)"],[32.0,"Merged 'watch disconnects' into 'Apple Watch sync drops sets' (0.88)"],[33.1,"Merged 'too expensive' into 'Subscription price vs. value' (0.86)"],[35.2,'14 themes final · writing names and descriptions'],[36.3,'Scoring: frequency × severity × recency × strategic fit (from your product context)'],[37.6,'6 opportunities above threshold (score ≥ 55) · top: 92, 89, 81'],[38.4,'Writing brief · every claim mapped to source item IDs…'],[40.2,'Eval against 50-item golden set: precision 0.91 · recall 0.87'],[41.0,'Done · 14 themes · 6 opportunities · 41s · $1.87']];
+const PROC=[[4,0],[24,1847],[30,3214]];
+const fmt=n=>Math.round(n).toLocaleString('en-US');
+const clamp=(x,a,b)=>Math.max(a,Math.min(b,x));
+const lerp=(a,b,x)=>a+(b-a)*x;
+const pw=(t,p)=>{if(t<=p[0][0])return p[0][1];for(let i=1;i<p.length;i++){if(t<=p[i][0]){const[t0,v0]=p[i-1],[t1,v1]=p[i];return lerp(v0,v1,(t-t0)/(t1-t0));}}return p[p.length-1][1];};
+const pwInv=n=>n<=1847?4+n/1847*20:24+(n-1847)/1367*6;
+const tok=x=>x>=1e6?(x/1e6).toFixed(1)+'M':Math.round(x/1e3)+'K';
+const mmss=t=>{const s=Math.floor(t);return String(Math.floor(s/60)).padStart(2,'0')+':'+String(s%60).padStart(2,'0');};
+const rA=c=>8+Math.sqrt(c)*1.9;
+const f1=x=>Number(x.toFixed(1));
+
+class Component extends DCLogic {
+  state={screen:null,t:0,drawerTheme:undefined,tip:false,logOpen:null,toast:null,settingsOpen:false,depth:'thorough',dataset:0,oppId:0};
+  _hit={};_prev={};_posA=null;_timer=null;_tt=null;_logEl=null;
+  get mode(){return this.props.liveState??'run';}
+  get screen(){return this.state.screen??this.props.screen??'home';}
+  get T(){const m=this.mode;return m==='mid'?24:m==='done'?41:this.state.t;}
+  componentDidMount(){if(this.screen==='live'&&this.mode==='run')this.start();}
+  componentWillUnmount(){clearInterval(this._timer);clearTimeout(this._tt);}
+  componentDidUpdate(){const el=this._logEl;if(el)el.scrollTop=el.scrollHeight;}
+  start(){clearInterval(this._timer);const sp=Number(this.props.speed??1);this._timer=setInterval(()=>{this.setState(s=>{const t=Math.min(41,s.t+0.1*sp);if(t>=41)clearInterval(this._timer);return{t};});},100);}
+  go(screen){this.setState({screen,drawerTheme:null,toast:null});if(screen==='live'&&this.mode==='run'&&this.state.t===0)this.start();}
+  showToast(msg){this.setState({toast:msg});clearTimeout(this._tt);this._tt=setTimeout(()=>this.setState({toast:null}),2400);}
+  posA(){
+    if(this._posA)return this._posA;
+    const nodes=[...THEMES.map(t=>({r:rA(t.c)})),...TRANS.map(x=>({r:rA(x.c)}))];
+    const GA=Math.PI*(3-Math.sqrt(5));
+    const order=THEMES.map((t,i)=>i).sort((a,b)=>nodes[b].r-nodes[a].r);
+    order.forEach((idx,k)=>{const rad=64*Math.sqrt(k),a=k*GA+0.6;nodes[idx].x=320+rad*Math.cos(a);nodes[idx].y=300+rad*0.85*Math.sin(a);});
+    TRANS.forEach((x,k)=>{const p=nodes[x.parent],n=nodes[14+k],a=1.1+k*2.1,d=p.r+n.r+14;n.x=p.x+d*Math.cos(a);n.y=p.y+d*Math.sin(a);});
+    for(let it=0;it<160;it++){
+      for(let i=0;i<nodes.length;i++)for(let j=i+1;j<nodes.length;j++){const a=nodes[i],b=nodes[j];let dx=b.x-a.x,dy=b.y-a.y,d=Math.hypot(dx,dy)||0.01;const min=a.r+b.r+16;if(d<min){const push=(min-d)/2;dx/=d;dy/=d;a.x-=dx*push;a.y-=dy*push;b.x+=dx*push;b.y+=dy*push;}}
+      nodes.forEach(n=>{n.x+=(320-n.x)*0.004;n.y+=(300-n.y)*0.004;n.x=clamp(n.x,n.r+8,632-n.r);n.y=clamp(n.y,n.r+20,580-n.r);});
+    }
+    this._posA=nodes;return nodes;
+  }
+  live(T){
+    const proc=pw(T,PROC);
+    const mg=x=>clamp((T-x.mergeT)/1,0,1);
+    const grow=(base,disc)=>proc>disc?Math.round(base*Math.min(1,(proc-disc)/(3214-disc))):0;
+    const themes=THEMES.map((t,i)=>{const tr=TRANS.find(x=>x.parent===i);let c=grow(t.c-(tr?tr.c:0),t.disc);if(tr)c+=Math.round(tr.c*mg(tr));return{...t,i,id:'t'+i,c,vis:c>0,m:0,parent:-1};});
+    const trans=TRANS.map((x,k)=>{const m=mg(x);const c=Math.round(grow(x.c,x.disc)*(1-m));const pt=THEMES[x.parent];return{n:x.n,sh:x.n,c,s:pt.s,sev:pt.sev,sa:pt.sa,id:'x'+k,i:14+k,vis:proc>x.disc&&m<1,m,parent:x.parent};});
+    const all=[...themes,...trans];const now=Date.now();
+    all.forEach(n=>{const p=this._prev[n.id];if(p!==undefined&&n.c>p)this._hit[n.id]=now;this._prev[n.id]=n.c;});
+    const age=n=>this.mode!=='run'?1:clamp((now-(this._hit[n.id]||0))/700,0,1);
+    return{proc,all,vis:all.filter(n=>n.vis),age,merges:TRANS.filter(x=>mg(x)>=1).length};
+  }
+  quote(r){return{pre:r.pre,quote:r.q,post:r.post,rating:r.rating,date:r.date,app:r.app};}
+  renderVals(){
+    const P=this.props,S=this.state,screen=this.screen,mode=this.mode,T=this.T,sp=Number(P.speed??1);
+    const mv=P.mapVariant??'constellation';
+    const drawerTheme=S.drawerTheme===undefined?(P.drawerOpen?0:null):S.drawerTheme;
+    const logOpen=S.logOpen??(P.logOpen??false);
+    const demoBanner=P.demoBanner??true;
+    const nav=[['home','New run'],['live','Live run'],['dashboard','Dashboard'],['opportunity','Opportunity']].map(([k,label])=>({label,go:()=>this.go(k),color:screen===k?'#E6EDF3':'#8B949E',dot:screen===k?'#FF6B35':'transparent'}));
+    // home
+    const datasets=[{kind:'App Store reviews',n:'Fitness tracker app reviews',meta:'3,214 items · 3 apps · 14 months',desc:'IronLog, SetCount and LiftLab. The flagship demo.'},{kind:'Support tickets',n:'SaaS support tickets',meta:'1,800 items · 1 product · 9 months',desc:'A fictional B2B analytics tool.'},{kind:'NPS verbatims',n:'NPS survey responses',meta:'950 items · scores 0–10 · 2 quarters',desc:'Free-text answers with promoter scores.'}].map((d,i)=>({...d,pick:()=>this.setState({dataset:i}),border:S.dataset===i?'#E6EDF3':'#30363D',shadow:S.dataset===i?'0 0 0 1px #E6EDF3':'none'}));
+    const thorough=S.depth==='thorough';
+    const estimate=thorough?'~45s · ~$1.90':'~20s · ~$0.80';
+    const recent=[{ds:'Fitness tracker app reviews',run:'#12',date:'9 Sep 2026',stats:'14 themes · 6 opportunities · 91% precision',cost:'$1.87',dur:'41s'},{ds:'SaaS support tickets',run:'#11',date:'2 Sep 2026',stats:'9 themes · 4 opportunities · 88% precision',cost:'$1.04',dur:'29s'},{ds:'NPS survey responses',run:'#10',date:'28 Aug 2026',stats:'7 themes · 3 opportunities · 93% precision',cost:'$0.61',dur:'18s'}];
+    // live
+    const L=this.live(T);const proc=L.proc;const done=T>=41;
+    const rawCount=17-L.merges;
+    const stageDef=[['01','Ingest',0,2],['02','Extract',2,30],['03','Cluster',30,36],['04','Rank',36,38],['05','Brief',38,41]];
+    const stages=stageDef.map(([k,name,a,b],i)=>{const st=T>=b?'done':T>=a?'running':'queued';let sub='';
+      if(name==='Ingest')sub=st==='queued'?'3,214 items':st==='running'?'parsing · normalizing…':'3,214 items · 2.0s';
+      if(name==='Extract')sub=st==='queued'?'batches of 20':st==='running'?(proc<1?'drafting taxonomy from 200 sample…':fmt(proc)+' / 3,214 · batch '+Math.floor(proc/20)+' / 161'):'3,214 items · 28.0s';
+      if(name==='Cluster')sub=st==='queued'?'awaiting extraction':st==='running'?'consolidating '+rawCount+' → 14':'14 themes · 6.0s';
+      if(name==='Rank')sub=st==='queued'?'freq × sev × recency × fit':st==='running'?'scoring 14 themes…':'6 opportunities · 2.0s';
+      if(name==='Brief')sub=st==='queued'?'with citations':st==='running'?'writing · citing item IDs…':'1,240 words · 3.0s';
+      return{k,name,sub,fill:st==='done'?'#2F9E6E':st==='running'?'#FF6B35':'none',stroke:st==='queued'?'#363D47':'none',ringOp:st==='running'&&mode==='run'?1:0,subColor:st==='running'?'#FF6B35':st==='done'?'#8A8F9C':'#565E69',line:i===4?'transparent':st==='done'?'#2F9E6E':'#21262D'};});
+    const batch=Math.floor(proc/20);
+    const rows=[];for(let k=0;k<8;k++){const b=batch-k;if(b<1)break;const rv=REVIEWS[(b*7)%REVIEWS.length];const fresh=mode==='run'&&(T-pwInv(b*20))<0.25*sp;const sev=rv.sev;rows.push({id:'b'+b,batch:String(b).padStart(3,'0'),pre:rv.pre,quote:rv.q,post:rv.post,rating:rv.rating,date:rv.date,app:rv.app,sentiment:rv.s,sentColor:SENT[rv.s],tags:rv.th.map(i=>THEMES[i].sh),op:fresh?0.25:1,ty:fresh?-6:0,s1:sev>=1?'#E9E9EE':'#262C34',s2:sev>=2?'#E9E9EE':'#262C34',s3:sev>=3?'#E9E9EE':'#262C34',s4:sev>=4?'#E9E9EE':'#262C34',s5:sev>=5?'#E9E9EE':'#262C34'});}
+    const style=n=>({fill:SENT[n.s],stroke:n.other?'#565E69':n.s==='mixed'?'#D64545':'none',dash:n.other?'4 4':'none',fillOp:n.other?0.08:0.9,op:f1(1-n.m)});
+    // A
+    const pos=this.posA();
+    const posOfA=n=>{let x=pos[n.i].x,y=pos[n.i].y;if(n.m>0){x=lerp(x,pos[n.parent].x,n.m);y=lerp(y,pos[n.parent].y,n.m);}return[x,y];};
+    let nodesA=[],nodesB=[],nodesC=[],pulses=[];
+    if(mv==='constellation'){
+      nodesA=L.vis.map(n=>{const[x,y]=posOfA(n);const r=rA(n.c);const big=r>=30;return{id:n.id,cx:f1(x),cy:f1(y),r:f1(r),glow:f1(r*1.45),...style(n),short:n.sh,c:fmt(n.c),ly:f1(big?y-2:y+r+14),cy2:f1(big?y+13:y+r+27),tfill:big?'#161B22':'#C9CBD3'};});
+      pulses=L.vis.filter(n=>L.age(n)<1).map(n=>{const a=L.age(n),[x,y]=posOfA(n);return{cx:f1(x),cy:f1(y),r:f1(rA(n.c)+4+a*16),op:f1((1-a)*0.8),fill:SENT[n.s]};});
+    }
+    if(mv==='spectrum'){
+      const vis=[...L.vis].sort((a,b)=>b.c-a.c);const yOf={};vis.forEach((n,k)=>yOf[n.id]=34+k*35);
+      nodesB=vis.map(n=>{let y=yOf[n.id];if(n.m>0)y=lerp(y,yOf['t'+n.parent]??y,n.m);const w=Math.max(2,n.c/450*420);const a=L.age(n);return{id:n.id,ty:f1(y+4),ry:f1(y-9),name:n.n,c:fmt(n.c),w:f1(w),cx:f1(190+w+8),px:f1(190+w-3),pop:f1(1-a),...style(n)};});
+    }
+    if(mv==='radar'){
+      const posOfC=n=>{const base=n.parent>=0?n.parent:n.i;let ang=(-90+base*(360/14)+(n.parent>=0?13:0))*Math.PI/180;const Rr=60+(5-n.sa)*50;let x=320+Rr*Math.cos(ang),y=300+Rr*Math.sin(ang);if(n.m>0){const pa=(-90+n.parent*(360/14))*Math.PI/180;x=lerp(x,320+Rr*Math.cos(pa),n.m);y=lerp(y,300+Rr*Math.sin(pa),n.m);}return[x,y];};
+      nodesC=L.vis.map(n=>{const[x,y]=posOfC(n);const r=4+Math.sqrt(n.c)*1.15;return{id:n.id,cx:f1(x),cy:f1(y),r:f1(r),glow:f1(r*1.6),...style(n),short:n.sh,c:fmt(n.c),ly:f1(y+r+13)};});
+      pulses=L.vis.filter(n=>L.age(n)<1).map(n=>{const a=L.age(n),[x,y]=posOfC(n);return{cx:f1(x),cy:f1(y),r:f1(4+Math.sqrt(n.c)*1.15+3+a*14),op:f1((1-a)*0.8),fill:SENT[n.s]};});
+    }
+    const ticks=[0,100,200,300,400].map(v=>({v:String(v),x:f1(190+v/450*420)}));
+    const rings=[5,4,3,2,1].map(s=>({r:60+(5-s)*50,l:'SEV '+s,ly:300-(60+(5-s)*50)-5}));
+    const tin=pw(T,[[2,0],[24,1.2e6],[30,1.72e6],[41,1.9e6]]),tout=pw(T,[[2,0],[24,121e3],[30,168e3],[41,210e3]]),cost=pw(T,[[2,0],[24,1.12],[30,1.55],[41,1.87]]),cache=Math.round(pw(T,[[2,0],[5,41],[12,66],[24,78],[41,78]]));
+    const counters=[{k:'PROCESSED',v:fmt(proc),u:'/ 3,214'},{k:'THEMES',v:String(L.vis.length),u:done?'final':'found'},{k:'TOKENS',v:tok(tin),u:'in · '+tok(tout)+' out'},{k:'COST',v:'$'+cost.toFixed(2),u:done?'total':'so far'},{k:'ELAPSED',v:mmss(T),u:done?'done':'running'},{k:'CACHE',v:cache+'%',u:'hit rate'}];
+    const log=LOG.filter(e=>e[0]<=T).map(e=>({ts:mmss(e[0])+'.'+Math.floor((e[0]%1)*10),msg:e[1]}));
+    const lastLog=log.length?log[log.length-1].msg:'Starting…';
+    // dashboard
+    const split=(t,W)=>{const k=W/100;return{wPos:f1(t.sp[0]*k),xNeu:f1(t.sp[0]*k),wNeu:f1(t.sp[1]*k),xNeg:f1((t.sp[0]+t.sp[1])*k),wNeg:f1(t.sp[2]*k)};};
+    const sevFills=sa=>{const o={};for(let k=1;k<=5;k++)o['s'+k]=k<=Math.round(sa)?'#E6EDF3':'#30363D';return o;};
+    const table=THEMES.map((t,i)=>{const oi=OPPS.findIndex(o=>o.th===i),opp=OPPS[oi];return{rank:String(i+1).padStart(2,'0'),n:t.n,cStr:fmt(t.c),share:(t.c/3214*100).toFixed(1)+'%',...split(t,120),...sevFills(t.sa),sev:t.sa.toFixed(1),spark:t.tr.map((v,k)=>(k*72/7).toFixed(1)+','+(18-v/10*16).toFixed(1)).join(' '),hasOpp:oi>=0,oppScore:opp?String(opp.score):'',open:()=>this.setState({drawerTheme:i}),openOpp:e=>{e.stopPropagation();this.setState({screen:'opportunity',oppId:oi,drawerTheme:null});},bg:drawerTheme===i?'#3A1F14':'transparent'};});
+    const dots=THEMES.map(t=>{const cx=44+t.c/450*322,cy=16+(5-t.sa)/4*280,r=3+Math.sqrt(t.c)*0.42;return{cx:f1(cx),cy:f1(cy),r:f1(r),fill:SENT[t.s],label:t.sh,lx:f1(cx+r+5),ly:f1(cy+4),lop:(t.c>=170||t.sa>=4.5)?1:0};});
+    let d=null,dQuotes=[];
+    if(drawerTheme!=null){const t=THEMES[drawerTheme],oi=OPPS.findIndex(o=>o.th===drawerTheme);const rs=REVIEWS.filter(r=>r.th.includes(drawerTheme)).sort((a,b)=>b.sev-a.sev);dQuotes=rs.slice(0,6).map(r=>this.quote(r));d={rank:String(drawerTheme+1).padStart(2,'0'),n:t.n,cStr:fmt(t.c),share:(t.c/3214*100).toFixed(1)+'%',...split(t,200),splitStr:t.sp[0]+' / '+t.sp[1]+' / '+t.sp[2],sev:t.sa.toFixed(1),qn:dQuotes.length,hasOpp:oi>=0,oppScore:oi>=0?String(OPPS[oi].score):'',openOpp:()=>this.setState({screen:'opportunity',oppId:oi,drawerTheme:null})};}
+    // opportunity
+    const O=OPPS[S.oppId]||OPPS[0];const oQuotes=O.ev.map(i=>this.quote(REVIEWS[i]));
+    const o={num:String((OPPS.indexOf(O))+1).padStart(2,'0'),title:O.title,problem:O.problem,score:String(O.score),cStr:fmt(THEMES[O.th].c),qn:oQuotes.length,factors:O.f.map(([name,val,note])=>({name,val,note,w:Math.round(parseFloat(val)*100)+'%'})),conf:O.conf,conf3:O.conf==='High'?'#2F9E6E':'#30363D',segments:O.segs.map(([n,v])=>({n,v:v+'%',w:v+'%'})),direction:O.direction,validate:O.validate,effort:O.effort,impact:O.impact,related:O.related.map(i=>({n:THEMES[i].n,open:()=>this.setState({screen:'dashboard',drawerTheme:i})}))};
+    return{rootH:P.height??'100vh',nav,demoBanner,isHome:screen==='home',isLive:screen==='live',isDash:screen==='dashboard',isOpp:screen==='opportunity',
+      datasets,estimate,settingsSummary:(thorough?'Thorough':'Fast')+' · cap 3,214 · '+estimate,settingsOpen:S.settingsOpen,toggleSettings:()=>this.setState(s=>({settingsOpen:!s.settingsOpen})),setFast:()=>this.setState({depth:'fast'}),setThorough:()=>this.setState({depth:'thorough'}),fastBg:thorough?'transparent':'#161B22',thoroughBg:thorough?'#161B22':'transparent',recent,run:()=>{this.setState({screen:'live',t:0,logOpen:null});this.start();},goDash:()=>this.go('dashboard'),
+      stages,elapsed:mmss(T),done,rows,batchStr:String(Math.min(161,batch)).padStart(3,'0'),mapTitle:mv.toUpperCase(),isA:mv==='constellation',isB:mv==='spectrum',isC:mv==='radar',nodesA,nodesB,nodesC,pulses,ticks,rings,counters,log,logCount:log.length,lastLog,logOpen,toggleLog:()=>this.setState({logOpen:!logOpen}),logToggleLabel:logOpen?'▾ hide':'▴ log',logRef:el=>{this._logEl=el;},
+      filters:[{k:'Rating',v:'All'},{k:'Date',v:'Last 14 months'},{k:'App',v:'All 3'},{k:'Sentiment',v:'All'}],table,dots,tip:S.tip,tipOn:()=>this.setState({tip:true}),tipOff:()=>this.setState({tip:false}),noop:()=>this.showToast('Brief opens in the next round'),drawerOpen:d!=null,d,dQuotes,closeDrawer:()=>this.setState({drawerTheme:null}),
+      o,oQuotes,addBrief:()=>this.showToast('Added to brief · 1 of 6'),copyMd:()=>this.showToast('Copied as Markdown'),dismiss:()=>{this.setState({screen:'dashboard'});this.showToast('Opportunity dismissed · undo');},
+      toastOn:!!S.toast,toast:S.toast};
+  }
+}
+</script>
+</body>
+</html>
