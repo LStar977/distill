@@ -134,7 +134,8 @@ export async function writeBrief(opts: BriefOptions): Promise<BriefResult> {
     user: buildBriefUser(opts),
     schema: briefSchema,
     purpose: "brief",
-    maxTokens: 8192,
+    maxTokens: 16000,
+    reasoning: "medium",
   });
   const known = new Set<string>();
   for (const o of opts.opportunities) for (const e of o.evidence) known.add(e.itemId);

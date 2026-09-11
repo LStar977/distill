@@ -145,7 +145,8 @@ export async function generateTexts(opts: {
         user: buildWriterUser(batch),
         schema: batchSchema,
         purpose: "write-reviews",
-        maxTokens: 8192,
+        maxTokens: 16000,
+        reasoning: "off",
       });
       const wanted = new Set(batch.map((r) => r.id));
       for (const rev of output.reviews) {

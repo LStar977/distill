@@ -278,7 +278,8 @@ async function runBatch(
         user: buildExtractUser(batch),
         schema: extractBatchSchema,
         purpose: "extract",
-        maxTokens: 8192,
+        maxTokens: 16000,
+        reasoning: "off",
       });
       const byId = new Map<string, ExtractionRow>();
       for (const row of output.items) if (!byId.has(row.itemId)) byId.set(row.itemId, row);

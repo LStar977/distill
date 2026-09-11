@@ -221,7 +221,8 @@ export async function writeOpportunities(opts: OpportunityOptions): Promise<Oppo
       user: buildOpportunityUser({ context: opts.context, ranked: r, candidates, segments, related, totalItems }),
       schema: opportunitySchema,
       purpose: "opportunity",
-      maxTokens: 4096,
+      maxTokens: 8192,
+      reasoning: "medium",
     });
     const { evidence, dropped } = resolveEvidence(output.evidence, candidates);
     if (dropped > 0) opts.timeline.log(`Dropped ${dropped} evidence pick${dropped === 1 ? "" : "s"} for '${r.theme.short}' · quote not found in source`);

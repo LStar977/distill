@@ -418,7 +418,8 @@ export async function runCluster(opts: ClusterOptions): Promise<ClusterResult> {
       user: buildClusterUser({ context: opts.context, taxonomyStats, rawStats: shownRaw, examples }),
       schema: consolidationSchema,
       purpose: "cluster",
-      maxTokens: 8192,
+      maxTokens: 16000,
+      reasoning: "medium",
     });
     decision = output;
   }

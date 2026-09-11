@@ -43,7 +43,8 @@ export async function judgeStrategicFit(opts: FitOptions): Promise<Map<string, F
     user: buildFitUser(opts.context, opts.themes),
     schema: fitSchema,
     purpose: "fit",
-    maxTokens: 4096,
+    maxTokens: 8192,
+    reasoning: "low",
   });
   const known = new Set(opts.themes.map((t) => t.id));
   for (const f of output.fits) {

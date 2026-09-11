@@ -105,7 +105,8 @@ export async function draftTaxonomy(opts: DraftTaxonomyOptions): Promise<{ taxon
     user: buildTaxonomyUser(opts.context, sampled),
     schema: taxonomySchema,
     purpose: "taxonomy",
-    maxTokens: 4096,
+    maxTokens: 8192,
+    reasoning: "medium",
   });
   return { taxonomy: finalizeTaxonomy(output), sampleSize: sampled.length };
 }

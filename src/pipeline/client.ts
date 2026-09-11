@@ -26,6 +26,38 @@ export interface ParseParams<T> {
   purpose: string;
   /** Put a cache breakpoint on the system block. Default true. */
   cache?: boolean;
+  /**
+   * How much the model should think. "off" for bulk, schema-shaped work
+   * (thinking tokens count against max_tokens and are billed as output);
+   * "medium" for the few synthesis calls where writing quality shows.
+   * Mapped per model family in `generationControls`; omitted = API defaults.
+   */
+  reasoning?: Reasoning;
+}
+
+export type Reasoning = "off" | "low" | "medium" | "high";
+
+type Effort = "low" | "medium" | "high";
+interface GenerationControls {
+  thinking?: Anthropic.ThinkingConfigParam;
+  effort?: Effort;
+}
+
+/**
+ * Haiku 4.5 rejects `effort` and has no adaptive thinking, so it gets nothing.
+ * Opus-tier models are never run with thinking disabled (it degrades output);
+ * "off" becomes adaptive thinking at low effort there. Sonnet 5 accepts
+ * `thinking: disabled`, which is the cheapest setting for extraction.
+ */
+export function generationControls(model: string, reasoning: Reasoning | undefined): GenerationControls {
+  if (reasoning === undefined) return {};
+  const m = model.toLowerCase();
+  if (m.includes("haiku")) return {};
+  const opusTier = m.includes("opus") || m.includes("fable") || m.includes("mythos");
+  if (reasoning === "off") {
+    return opusTier ? { thinking: { type: "adaptive" }, effort: "low" } : { thinking: { type: "disabled" } };
+  }
+  return { thinking: { type: "adaptive" }, effort: reasoning };
 }
 
 export interface ParseResult<T> {
@@ -121,6 +153,7 @@ export class AnthropicLLM implements LLM {
     if (params.cache !== false) systemBlock.cache_control = { type: "ephemeral" };
     const messages: Anthropic.MessageParam[] = [{ role: "user", content: params.user }];
     const info = { model: params.model, purpose: params.purpose };
+    const controls = generationControls(params.model, params.reasoning);
 
     let retries = 0;
     for (let attempt = 1; ; attempt++) {
@@ -130,7 +163,11 @@ export class AnthropicLLM implements LLM {
           max_tokens: maxTokens,
           system: [systemBlock],
           messages,
-          output_config: { format: zodOutputFormat(params.schema) },
+          ...(controls.thinking ? { thinking: controls.thinking } : {}),
+          output_config: {
+            format: zodOutputFormat(params.schema),
+            ...(controls.effort ? { effort: controls.effort } : {}),
+          },
         });
 
         if (res.stop_reason === "refusal") {
