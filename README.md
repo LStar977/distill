@@ -7,6 +7,9 @@ Distill is an AI research agent that turns a pile of unstructured customer feedb
 opportunities, each backed by traceable evidence and written up as a brief a team could
 act on tomorrow. You watch the agent work in real time, then explore the results.
 
+**Live demo:** [distill-tau-five.vercel.app](https://distill-tau-five.vercel.app) · press
+**Run analysis** and watch a real 3,214-review run replay in about 45 seconds.
+
 > Portfolio project #1 of 6. Built brief → Claude Design → code, same pipeline as
 > [TITAN](https://github.com/LStar977/titan). Design source is in `design/handoff`.
 
