@@ -14,7 +14,12 @@ export async function getRunFile(id: string): Promise<RunFile | null> {
     cache.set(
       id,
       readFile(join(RUNS_DIR, `${id}.json`), "utf8")
-        .then((text) => JSON.parse(text) as RunFile)
+        .then((text) => {
+          const file = JSON.parse(text) as RunFile;
+          // The filename is the public id; the pipeline's internal id may differ.
+          file.run.id = id;
+          return file;
+        })
         .catch(() => null),
     );
   }

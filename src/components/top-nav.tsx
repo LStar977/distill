@@ -16,7 +16,7 @@ export function TopNav({ latestRunId, latestRunNumber, demo }: { latestRunId: st
     { label: "New run", href: "/", active: isHome },
     { label: "Live run", href: runId ? `/runs/${runId}/live` : "/", active: isLive },
     { label: "Dashboard", href: runId ? `/runs/${runId}` : "/", active: isDash },
-    { label: "Opportunity", href: runId ? `/runs/${runId}/opportunities/o01` : "/", active: isOpp },
+    { label: "Opportunity", href: runId ? `/runs/${runId}/opportunities/first` : "/", active: isOpp },
   ];
 
   return (

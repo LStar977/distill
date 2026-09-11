@@ -151,15 +151,19 @@ export function stateAt(events: PipelineEvent[], at: number): LiveState {
   return s;
 }
 
-/** Themes currently visible on the map (merged ones linger ~1s while they drift). */
-export function visibleThemes(state: LiveState, now = state.t): LiveTheme[] {
-  return [...state.themes.values()].filter((t) => t.count > 0 && (t.mergedAt === undefined || now - t.mergedAt < 1));
+/**
+ * Themes currently visible on the map. Merged ones linger about one real
+ * second while they drift into their parent; `timeScale` is the replay rate,
+ * so the linger is measured in wall-clock time whatever the compression.
+ */
+export function visibleThemes(state: LiveState, now = state.t, timeScale = 1): LiveTheme[] {
+  return [...state.themes.values()].filter((t) => t.count > 0 && (t.mergedAt === undefined || now - t.mergedAt < 1 * timeScale));
 }
 
-/** 0 → just merged, 1 → fully gone. */
-export function mergeProgress(t: LiveTheme, now: number) {
+/** 0 → just merged, 1 → fully gone (over one real second). */
+export function mergeProgress(t: LiveTheme, now: number, timeScale = 1) {
   if (t.mergedAt === undefined) return 0;
-  return Math.max(0, Math.min(1, now - t.mergedAt));
+  return Math.max(0, Math.min(1, (now - t.mergedAt) / timeScale));
 }
 
 export const rawThemeCount = (state: LiveState) =>

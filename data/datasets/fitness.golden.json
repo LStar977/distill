@@ -1,0 +1,362 @@
+{
+  "note": "Labels are planted by construction: each review was generated to express exactly the themes listed here (primary first, optional secondary), and the set was spot-checked by hand after generation. Sentiment is the planted tone. The 'Other / uncategorized' label means the review touches none of the 13 themes.",
+  "items": [
+    {
+      "itemId": "fit-0187",
+      "themes": [
+        "Subscription price vs. value",
+        "Import from other trackers is missing"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-0229",
+      "themes": [
+        "Wants superset / circuit support"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-0319",
+      "themes": [
+        "Dark mode requests"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-0320",
+      "themes": [
+        "Onboarding too long"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-0448",
+      "themes": [
+        "Widget requests"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-0498",
+      "themes": [
+        "Other / uncategorized"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-0547",
+      "themes": [
+        "Dark mode requests",
+        "Progress charts praised"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-0576",
+      "themes": [
+        "Plate calculator loved"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-0617",
+      "themes": [
+        "Crashes on iOS 18 beta"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-0664",
+      "themes": [
+        "Import from other trackers is missing"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-0727",
+      "themes": [
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-0896",
+      "themes": [
+        "Onboarding too long",
+        "Subscription price vs. value"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-0986",
+      "themes": [
+        "Exercise library gaps (cables, machines)"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1153",
+      "themes": [
+        "Subscription price vs. value"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1166",
+      "themes": [
+        "Import from other trackers is missing"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1176",
+      "themes": [
+        "Other / uncategorized"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1202",
+      "themes": [
+        "Subscription price vs. value"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1223",
+      "themes": [
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-1225",
+      "themes": [
+        "Import from other trackers is missing"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1263",
+      "themes": [
+        "Onboarding too long"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1274",
+      "themes": [
+        "Other / uncategorized"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1330",
+      "themes": [
+        "Plate calculator loved"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1424",
+      "themes": [
+        "Progress charts praised"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1455",
+      "themes": [
+        "Wants coach / program sharing"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-1456",
+      "themes": [
+        "Exercise library gaps (cables, machines)"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1462",
+      "themes": [
+        "Plate calculator loved"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1515",
+      "themes": [
+        "Exercise library gaps (cables, machines)"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1545",
+      "themes": [
+        "Wants superset / circuit support",
+        "Rest timer unreliable in background"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-1591",
+      "themes": [
+        "Other / uncategorized"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-1747",
+      "themes": [
+        "Wants coach / program sharing"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-1753",
+      "themes": [
+        "Rest timer unreliable in background",
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-1827",
+      "themes": [
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-1837",
+      "themes": [
+        "Rest timer unreliable in background"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2144",
+      "themes": [
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2194",
+      "themes": [
+        "Import from other trackers is missing"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2237",
+      "themes": [
+        "Progress charts praised"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-2263",
+      "themes": [
+        "Apple Watch sync drops sets"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2439",
+      "themes": [
+        "Subscription price vs. value"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2450",
+      "themes": [
+        "Dark mode requests"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-2552",
+      "themes": [
+        "Crashes on iOS 18 beta"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2703",
+      "themes": [
+        "Wants superset / circuit support",
+        "Exercise library gaps (cables, machines)"
+      ],
+      "sentiment": "mixed"
+    },
+    {
+      "itemId": "fit-2856",
+      "themes": [
+        "Plate calculator loved"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-2865",
+      "themes": [
+        "Other / uncategorized"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-2904",
+      "themes": [
+        "Crashes on iOS 18 beta"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2935",
+      "themes": [
+        "Rest timer unreliable in background"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2937",
+      "themes": [
+        "Rest timer unreliable in background"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-2967",
+      "themes": [
+        "Widget requests",
+        "Dark mode requests"
+      ],
+      "sentiment": "neutral"
+    },
+    {
+      "itemId": "fit-3002",
+      "themes": [
+        "Rest timer unreliable in background"
+      ],
+      "sentiment": "negative"
+    },
+    {
+      "itemId": "fit-3083",
+      "themes": [
+        "Progress charts praised"
+      ],
+      "sentiment": "positive"
+    },
+    {
+      "itemId": "fit-3183",
+      "themes": [
+        "Wants coach / program sharing"
+      ],
+      "sentiment": "neutral"
+    }
+  ]
+}

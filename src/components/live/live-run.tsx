@@ -12,6 +12,14 @@ import { ExtractionStream } from "./extraction-stream";
 import { StageRail } from "./stage-rail";
 
 const SPEEDS = [1, 2, 4] as const;
+/** Long real runs replay compressed so the whole thing plays in about this long. */
+const TARGET_REPLAY_SECONDS = 45;
+
+/** Replay rate at 1×: real time for short runs, compressed for long ones. */
+export function baseSpeedFor(durationSeconds: number) {
+  if (durationSeconds <= 60) return 1;
+  return Math.max(1, Math.round(durationSeconds / TARGET_REPLAY_SECONDS));
+}
 
 export function LiveRun({
   run,
@@ -28,6 +36,10 @@ export function LiveRun({
   initialEvents?: PipelineEvent[];
 }) {
   const [speed, setSpeed] = useState(initialSpeed);
+  const durationSeconds = Math.max(1, run.stats.durationMs / 1000);
+  const base = useMemo(() => baseSpeedFor(durationSeconds), [durationSeconds]);
+  /** Effective playback rate sent to the server and used for time-based effects. */
+  const rate = base * speed;
   const [state, setState] = useState<LiveState>(() => (paused && initialEvents ? stateAt(initialEvents, initialAt) : initialState()));
   const [clock, setClock] = useState(initialAt);
   const [logOpen, setLogOpen] = useState(false);
@@ -40,17 +52,17 @@ export function LiveRun({
   }, [state.done]);
 
   const totalItems = run.stats.items;
-  const finalT = useMemo(() => Math.max(run.stats.durationMs / 1000, 41), [run]);
+  const finalT = durationSeconds;
 
   // Stream events from the server; it paces them by `t` / speed.
   useEffect(() => {
     if (paused) return;
     const from = fromRef.current;
-    const es = new EventSource(`/api/runs/${run.id}/stream?speed=${speed}&from=${from}`);
+    const es = new EventSource(`/api/runs/${run.id}/stream?speed=${rate}&from=${from}`);
     const startWall = performance.now();
     let raf = 0;
     const tick = () => {
-      const t = Math.min(finalT, from + ((performance.now() - startWall) / 1000) * speed);
+      const t = Math.min(finalT, from + ((performance.now() - startWall) / 1000) * rate);
       setClock(t);
       if (!doneRef.current) raf = requestAnimationFrame(tick);
     };
@@ -62,7 +74,7 @@ export function LiveRun({
       setState((prev) => applyEvent(prev, e));
       if (e.type === "batch") {
         setFresh((prev) => new Set(prev).add(e.batch));
-        freshTimers.push(setTimeout(() => setFresh((prev) => { const n = new Set(prev); n.delete(e.batch); return n; }), 250 / speed));
+        freshTimers.push(setTimeout(() => setFresh((prev) => { const n = new Set(prev); n.delete(e.batch); return n; }), Math.max(60, 250 / speed)));
       }
       if (e.type === "done") {
         setClock(e.t);
@@ -75,7 +87,7 @@ export function LiveRun({
       cancelAnimationFrame(raf);
       freshTimers.forEach(clearTimeout);
     };
-  }, [run.id, speed, paused, finalT, reconnectKey]);
+  }, [run.id, rate, speed, paused, finalT, reconnectKey]);
 
   const changeSpeed = (s: number) => {
     if (s === speed) return;
@@ -92,7 +104,7 @@ export function LiveRun({
     setReconnectKey((k) => k + 1);
   };
 
-  const themes = visibleThemes(state, clock);
+  const themes = visibleThemes(state, clock, rate);
   const visibleCount = themes.filter((t) => t.mergedAt === undefined).length;
   const finalCounts = useMemo(() => new Map(run.themes.map((t) => [t.id, t.count])), [run.themes]);
   const themeShorts = useMemo(() => new Map(run.themes.map((t) => [t.name, t.short])), [run.themes]);
@@ -119,7 +131,7 @@ export function LiveRun({
               ))}
             </div>
             <div className="flex flex-col items-end gap-0.5">
-              <span className="eyebrow-instrument">ELAPSED</span>
+              <span className="eyebrow-instrument">{base > 1 ? `ELAPSED · REPLAY ${rate}×` : "ELAPSED"}</span>
               <span className="tnum font-mono text-[22px] font-medium leading-none text-instrument-ink-bright">{mmss(clock)}</span>
             </div>
             {state.done ? (
@@ -146,7 +158,7 @@ export function LiveRun({
               <span className="font-mono text-[11px] text-instrument-ink-dim">size = mentions · color = sentiment</span>
             </div>
             <div className="flex min-h-0 flex-1 items-center justify-center overflow-hidden">
-              <Constellation themes={themes} now={clock} finalCounts={finalCounts} />
+              <Constellation themes={themes} now={clock} finalCounts={finalCounts} timeScale={rate} />
             </div>
           </div>
         </div>

@@ -286,14 +286,17 @@ export function normalizeItems(input: readonly Item[], opts: { cap?: number } = 
       empty++;
       continue;
     }
-    const key = text.toLowerCase();
+    // Distinct people write identical short reviews on different days ("Great
+    // app."), so a duplicate is the same text from the same source on the same
+    // date, not merely the same text.
+    const date = normalizeDate(raw.date);
+    const key = `${(raw.source || "").toLowerCase()}|${date ?? ""}|${text.toLowerCase()}`;
     if (seen.has(key)) {
       duplicates++;
       continue;
     }
     seen.add(key);
     const item: Item = { id: String(raw.id), source: raw.source || "unknown", text };
-    const date = normalizeDate(raw.date);
     if (date) item.date = date;
     if (typeof raw.rating === "number" && Number.isFinite(raw.rating)) item.rating = raw.rating;
     if (raw.segment) item.segment = raw.segment;

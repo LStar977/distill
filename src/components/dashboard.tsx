@@ -35,7 +35,12 @@ export function Dashboard({ run, initialTheme }: { run: Run; initialTheme: strin
         .slice(0, 6)
     : [];
 
-  const maxMentions = 450;
+  // Axis ceiling: the largest theme rounded up to a friendly step, so a
+  // 100-item run and a 3,000-item run both fill the matrix.
+  const maxCount = Math.max(1, ...run.themes.map((t) => t.count));
+  const step = maxCount > 1000 ? 250 : maxCount > 200 ? 50 : maxCount > 50 ? 10 : 5;
+  const maxMentions = Math.ceil((maxCount * 1.08) / step) * step;
+  const midMentions = Math.round(maxMentions / 2);
   const precision = run.eval ? Math.round(run.eval.themePrecision * 100) : null;
 
   return (
@@ -173,7 +178,7 @@ export function Dashboard({ run, initialTheme }: { run: Run; initialTheme: strin
                 </text>
               ))}
               <text x="44" y="312" fill="var(--ink-dim)" className="font-mono" style={{ fontSize: 9 }}>0</text>
-              <text x="187" y="312" fill="var(--ink-dim)" className="font-mono" style={{ fontSize: 9, textAnchor: "middle" }}>200</text>
+              <text x="187" y="312" fill="var(--ink-dim)" className="font-mono" style={{ fontSize: 9, textAnchor: "middle" }}>{midMentions}</text>
               <text x="366" y="312" fill="var(--ink-dim)" className="font-mono" style={{ fontSize: 9, textAnchor: "end" }}>{maxMentions} mentions</text>
               <text x="14" y="160" fill="var(--ink-dim)" className="font-mono" style={{ fontSize: 9, textAnchor: "middle", transform: "rotate(-90deg)", transformOrigin: "14px 160px" }}>
                 severity

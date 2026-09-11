@@ -14,7 +14,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
   if (!file) return new Response("run not found", { status: 404 });
 
   const url = new URL(req.url);
-  const speed = Math.max(0.25, Math.min(16, Number(url.searchParams.get("speed") ?? 1) || 1));
+  const speed = Math.max(0.25, Math.min(256, Number(url.searchParams.get("speed") ?? 1) || 1));
   const from = Math.max(0, Number(url.searchParams.get("from") ?? 0) || 0);
   const events = file.events;
 

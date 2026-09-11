@@ -14,7 +14,7 @@ export function StageRail({ state, totalItems, running }: { state: LiveState; to
       case "extract":
         if (status !== "running") return "batches of 20";
         return state.processed < 1
-          ? "drafting taxonomy from 200 sample…"
+          ? "first batches in flight…"
           : `${fmt(state.processed)} / ${fmt(totalItems)} · batch ${state.batch} / ${state.totalBatches}`;
       case "cluster":
         return status === "running" ? `consolidating ${rawThemes} raw themes` : "awaiting extraction";

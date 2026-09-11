@@ -26,7 +26,7 @@ const SHOTS: { name: string; path: string; settle?: number; action?: (page: impo
   },
   { name: "04-dashboard", path: `/runs/${RUN}` },
   { name: "05-dashboard-drawer", path: `/runs/${RUN}?theme=t01`, settle: 600 },
-  { name: "06-opportunity", path: `/runs/${RUN}/opportunities/o01` },
+  { name: "06-opportunity", path: `/runs/${RUN}/opportunities/first` },
 ];
 
 async function main() {

@@ -8,7 +8,7 @@
  * typed pipeline error, 2 on bad usage.
  */
 import { mkdir, writeFile } from "node:fs/promises";
-import { dirname, resolve } from "node:path";
+import { basename, dirname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import type { Depth, PipelineEvent, RunContext } from "../src/lib/types";
 import { AnthropicLLM, hasCredentials } from "../src/pipeline/client";
@@ -17,7 +17,7 @@ import { loadDataset } from "../src/pipeline/ingest";
 import { resolveModels } from "../src/pipeline/models";
 import { runPipeline } from "../src/pipeline/run";
 
-const USAGE = `usage: pnpm pipeline --dataset <id> --out <file.json> [--limit N] [--depth fast|thorough] [--product "…"] [--decision "…"] [--concurrency N] [--max-cost 3.00]`;
+const USAGE = `usage: pnpm pipeline --dataset <id> --out <file.json> [--limit N] [--depth fast|thorough] [--product "…"] [--decision "…"] [--concurrency N] [--max-cost 3.00] [--run-id id] [--run-number N]`;
 const DEFAULT_MAX_COST = "3";
 
 function fail(message: string, code: number): never {
@@ -36,6 +36,8 @@ async function main(): Promise<void> {
       decision: { type: "string" },
       concurrency: { type: "string" },
       "max-cost": { type: "string", default: DEFAULT_MAX_COST },
+      "run-id": { type: "string" },
+      "run-number": { type: "string" },
       help: { type: "boolean", short: "h" },
     },
     strict: true,
@@ -48,6 +50,10 @@ async function main(): Promise<void> {
   }
   if (!values.dataset) fail(`missing --dataset\n${USAGE}`, 2);
   const out = values.out ?? `data/runs/${values.dataset}.json`;
+  // The file's basename is the id the app serves it under; keep them in sync.
+  const runId = values["run-id"] ?? basename(out).replace(/\.json$/, "");
+  const runNumber = values["run-number"] !== undefined ? Number(values["run-number"]) : undefined;
+  if (runNumber !== undefined && (!Number.isInteger(runNumber) || runNumber <= 0)) fail(`--run-number must be a positive integer`, 2);
   const depth = values.depth as Depth;
   if (depth !== "fast" && depth !== "thorough") fail(`--depth must be fast or thorough\n${USAGE}`, 2);
   const limit = values.limit !== undefined ? Number(values.limit) : undefined;
@@ -88,6 +94,8 @@ async function main(): Promise<void> {
     onEvent,
     concurrency,
     maxCostUsd,
+    runId,
+    ...(runNumber !== undefined ? { runNumber } : {}),
   });
 
   const outPath = resolve(out);

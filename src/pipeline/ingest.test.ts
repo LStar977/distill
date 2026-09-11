@@ -52,18 +52,20 @@ describe("normalizeItems", () => {
   const items = [
     { id: "c", source: "A", text: "  Same   text ", date: "2 Jun 2026", rating: 3 },
     { id: "a", source: "B", text: "same text", date: "2026-01-01" },
+    { id: "f", source: "a", text: "same text", date: "2026-06-02" },
     { id: "b", source: "A", text: "", date: "2026-01-02" },
     { id: "d", source: "A", text: "Other", date: "2025-08-05" },
     { id: "e", source: "C", text: "Undated" },
   ];
-  it("dedupes exact text (whitespace/case-insensitive), drops empties, sorts by date", () => {
+  it("dedupes same source + date + text (whitespace/case-insensitive), keeps repeats elsewhere, drops empties, sorts by date", () => {
     const r = normalizeItems(items);
-    expect(r.items.map((i) => i.id)).toEqual(["d", "c", "e"]);
+    // "a" repeats the text on a different source and day, so it stays; "f" is a true duplicate of "c".
+    expect(r.items.map((i) => i.id)).toEqual(["d", "a", "c", "e"]);
     expect(r.duplicates).toBe(1);
     expect(r.empty).toBe(1);
     expect(r.dropped).toBe(2);
-    expect(r.items[1]).toEqual({ id: "c", source: "A", text: "Same text", date: "2026-06-02", rating: 3 });
-    expect(r.sources).toEqual(["A", "C"]);
+    expect(r.items[2]).toEqual({ id: "c", source: "A", text: "Same text", date: "2026-06-02", rating: 3 });
+    expect(r.sources).toEqual(["A", "B", "C"]);
     expect(r.months).toBe(11);
   });
   it("applies the cap with evenly spaced picks so the date range survives", () => {

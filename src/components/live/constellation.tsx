@@ -13,12 +13,15 @@ export function Constellation({
   themes,
   now,
   finalCounts,
+  timeScale = 1,
 }: {
   themes: LiveTheme[];
   /** Replay clock in seconds; drives pulse rings and merge drift. */
   now: number;
   /** Final counts when known (pre-computed run), so the layout is stable from the first frame. */
   finalCounts: Map<string, number>;
+  /** Replay rate; pulse rings and merge drift are timed in wall-clock seconds. */
+  timeScale?: number;
 }) {
   // Radius used for layout: the final count when known (pre-computed run), else
   // the live count. Re-solve when a node appears or its radius crosses a 10px
@@ -35,10 +38,11 @@ export function Constellation({
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const layout = useMemo(() => solveLayout(layoutNodes), [key]);
 
+  const scale = Math.max(1, timeScale);
   const posOf = (t: LiveTheme) => {
     const p = layout.get(t.id);
     if (!p) return { x: MAP_W / 2, y: MAP_H / 2 };
-    const m = mergeProgress(t, now);
+    const m = mergeProgress(t, now, scale);
     if (m > 0 && t.parentId) {
       const pp = layout.get(t.parentId);
       if (pp) return { x: lerp(p.x, pp.x, m), y: lerp(p.y, pp.y, m) };
@@ -49,7 +53,7 @@ export function Constellation({
   return (
     <svg width={MAP_W} height={MAP_H} className="block overflow-visible" role="img" aria-label="Theme map">
       {themes.map((t) => {
-        const age = Math.max(0, Math.min(1, (now - t.lastHitAt) / 0.7));
+        const age = Math.max(0, Math.min(1, (now - t.lastHitAt) / (0.7 * scale)));
         if (age >= 1 || t.mergedAt !== undefined) return null;
         const { x, y } = posOf(t);
         return (
@@ -69,7 +73,7 @@ export function Constellation({
         const { x, y } = posOf(t);
         const r = radiusFor(t.count);
         const big = r >= 30;
-        const m = mergeProgress(t, now);
+        const m = mergeProgress(t, now, scale);
         const fill = SENTIMENT_COLOR[t.sentiment];
         const stroke = t.other ? "var(--ink-faint)" : t.sentiment === "mixed" ? "var(--negative)" : "none";
         const transition = "r .4s, cx .8s, cy .8s";

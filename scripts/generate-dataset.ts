@@ -153,7 +153,10 @@ export async function generateTexts(opts: {
         if (!wanted.has(rev.id) || partial.texts[rev.id] || !rowById.has(rev.id)) continue;
         const text = normalizeText(rev.text);
         const key = text.toLowerCase();
-        if (!validText(text) || seenTexts.has(key)) {
+        // One-word reviews legitimately repeat in real stores ("Great app." ×40),
+        // and the supply of distinct ones runs out long before the quota does.
+        const allowDuplicate = rowById.get(rev.id)?.subtopic === "one-word";
+        if (!validText(text) || (!allowDuplicate && seenTexts.has(key))) {
           rejected++;
           continue;
         }
