@@ -9,6 +9,7 @@ act on tomorrow. You watch the agent work in real time, then explore the results
 
 **Live demo:** [distill-tau-five.vercel.app](https://distill-tau-five.vercel.app) · press
 **Run analysis** and watch a real 3,214-review run replay in about 45 seconds.
+**Demo video:** [promo/distill-demo.mp4](promo/distill-demo.mp4) (48s, recorded from the real app).
 
 > Portfolio project #1 of 6. Built brief → Claude Design → code, same pipeline as
 > [TITAN](https://github.com/LStar977/titan). Design source is in `design/handoff`.
@@ -100,7 +101,8 @@ Other scripts:
 pnpm test                    # vitest: pipeline pure functions, replay reducer, layout
 pnpm typecheck && pnpm lint
 pnpm tsx scripts/build-demo-fixture.ts   # regenerate the design-derived reference fixture
-pnpm tsx scripts/screenshots.ts          # 1440×900 captures from a running dev server
+pnpm screenshots                         # 1440×900 captures from a running dev server
+pnpm video:record                        # records promo/distill-demo.mp4 from a running prod server (pnpm start -p 3100)
 ```
 
 ## How it's put together

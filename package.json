@@ -10,7 +10,9 @@
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "pipeline": "tsx scripts/run-pipeline.ts",
-    "data:generate": "tsx scripts/generate-dataset.ts"
+    "data:generate": "tsx scripts/generate-dataset.ts",
+    "video:record": "tsx scripts/video/record.ts",
+    "screenshots": "tsx scripts/screenshots.ts"
   },
   "dependencies": {
     "@anthropic-ai/sdk": "^0.125.0",
@@ -24,6 +26,7 @@
     "zod": "^4.6.2"
   },
   "devDependencies": {
+    "@ffmpeg-installer/ffmpeg": "^1.1.0",
     "@tailwindcss/postcss": "^4",
     "@types/node": "^22.20.2",
     "@types/react": "^19",
