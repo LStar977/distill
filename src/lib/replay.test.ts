@@ -4,7 +4,7 @@ import { describe, expect, it } from "vitest";
 import { applyEvent, initialState, mergeProgress, stateAt, visibleThemes } from "./replay";
 import type { PipelineEvent, RunFile } from "./types";
 
-const fixture = JSON.parse(readFileSync(join(process.cwd(), "data", "runs", "fitness-demo.json"), "utf8")) as RunFile;
+const fixture = JSON.parse(readFileSync(join(process.cwd(), "design", "fixture", "fitness-demo.json"), "utf8")) as RunFile;
 
 describe("replay reducer", () => {
   it("starts with every stage queued and nothing processed", () => {
@@ -62,7 +62,7 @@ describe("replay reducer", () => {
   });
 });
 
-describe("fitness-demo fixture", () => {
+describe("design-derived fixture (design/fixture/fitness-demo.json)", () => {
   const { run, events } = fixture;
 
   it("is sorted by time", () => {

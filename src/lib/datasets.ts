@@ -22,8 +22,8 @@ export const DATASETS: DemoDataset[] = [
       product:
         "IronLog is a paid workout tracker for strength athletes on iOS and Apple Watch. We're deciding what to fix before the next annual-pricing push.",
     },
-    runId: "fitness-demo",
-    estimate: { thorough: "~45s · ~$1.90", fast: "~20s · ~$0.80" },
+    runId: "fitness",
+    estimate: { thorough: "~25 min · ~$4.00", fast: "~24 min · ~$2.55" },
   },
   {
     id: "saas-tickets",
@@ -37,7 +37,7 @@ export const DATASETS: DemoDataset[] = [
       product: "A self-serve B2B analytics tool for product teams. We're deciding what to fix to reduce ticket volume before the enterprise launch.",
     },
     runId: null,
-    estimate: { thorough: "~30s · ~$1.10", fast: "~14s · ~$0.45" },
+    estimate: { thorough: "~14 min · ~$2.30", fast: "~13 min · ~$1.50" },
   },
   {
     id: "nps",
@@ -51,7 +51,7 @@ export const DATASETS: DemoDataset[] = [
       product: "A consumer budgeting app. We're deciding which two things to fix this quarter to move detractors to passives.",
     },
     runId: null,
-    estimate: { thorough: "~18s · ~$0.65", fast: "~9s · ~$0.25" },
+    estimate: { thorough: "~8 min · ~$1.30", fast: "~7 min · ~$0.85" },
   },
 ];
 

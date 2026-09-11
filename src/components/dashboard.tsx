@@ -41,6 +41,11 @@ export function Dashboard({ run, initialTheme }: { run: Run; initialTheme: strin
   const step = maxCount > 1000 ? 250 : maxCount > 200 ? 50 : maxCount > 50 ? 10 : 5;
   const maxMentions = Math.ceil((maxCount * 1.08) / step) * step;
   const midMentions = Math.round(maxMentions / 2);
+  // Label the biggest few themes and anything severe; the rest stay as dots so labels don't pile up.
+  const labelled = new Set([
+    ...[...run.themes].filter((t) => !t.other).sort((a, b) => b.count - a.count).slice(0, 4).map((t) => t.id),
+    ...run.themes.filter((t) => t.severityAvg >= 4.5).map((t) => t.id),
+  ]);
   const precision = run.eval ? Math.round(run.eval.themePrecision * 100) : null;
 
   return (
@@ -137,7 +142,7 @@ export function Dashboard({ run, initialTheme }: { run: Run; initialTheme: strin
                         </div>
                       </td>
                       <td className="px-3 py-2.5">
-                        <Sparkline values={t.trend} />
+                        <Sparkline values={t.trend} max={Math.max(1, ...t.trend)} />
                       </td>
                       <td className="py-2 pl-3 pr-4">
                         {opp && (
@@ -187,11 +192,10 @@ export function Dashboard({ run, initialTheme }: { run: Run; initialTheme: strin
                 const cx = 44 + (t.count / maxMentions) * 322;
                 const cy = 16 + ((5 - t.severityAvg) / 4) * 280;
                 const r = 3 + Math.sqrt(t.count) * 0.42;
-                const labelled = t.count >= 170 || t.severityAvg >= 4.5;
                 return (
                   <g key={t.id} className="cursor-pointer" onClick={() => openTheme(t.id)}>
                     <circle cx={cx} cy={cy} r={r} fill={SENTIMENT_COLOR[t.sentiment]} opacity="0.85" stroke="var(--surface)" strokeWidth="1.5" />
-                    {labelled && (
+                    {labelled.has(t.id) && (
                       <text x={cx + r + 5} y={cy + 4} fill="var(--ink)" className="font-sans" style={{ fontSize: 10.5 }}>
                         {t.short}
                       </text>

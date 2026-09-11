@@ -1,9 +1,9 @@
 /**
- * Builds data/runs/fitness-demo.json from the numbers in the design handoff
+ * Builds design/fixture/fitness-demo.json from the numbers in the design handoff
  * (design/handoff/project/DistillApp.dc.html, THEMES / TRANS / REVIEWS / OPPS /
  * LOG / PROC). The output is a RunFile on the same event schema the real
- * pipeline emits, so the public demo replays exactly what the design shows
- * until `pnpm pipeline --dataset fitness` replaces it with a real run.
+ * pipeline emits. It was the demo until the real run landed; it stays as a
+ * reference for the design's intended shape and as a replay-reducer fixture.
  *
  *   pnpm tsx scripts/build-demo-fixture.ts
  */
@@ -25,7 +25,8 @@ import type {
 } from "../src/lib/types";
 
 const here = dirname(fileURLToPath(import.meta.url));
-const OUT = join(here, "..", "data", "runs", "fitness-demo.json");
+// Kept under design/ as the design-derived reference; the app serves real runs from data/runs.
+const OUT = join(here, "..", "design", "fixture", "fitness-demo.json");
 
 const TOTAL = 3214;
 const BATCH = 20;

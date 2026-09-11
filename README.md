@@ -43,8 +43,13 @@ supports it.
   one for taxonomy, consolidation and the brief. The taxonomy prompt is cached; the
   live counters show tokens, cost and cache hit rate as the run happens.
 
-**Result.** On the flagship dataset (3,214 reviews across three fictional fitness
-trackers): 14 themes, 6 opportunities, 91% extraction precision, 41 seconds, $1.87.
+**Result.** On the flagship dataset (3,214 synthetic reviews across three fictional
+fitness trackers): 13 themes, 6 opportunities, a 1,632-word brief with 34 citations,
+81% precision / 82% recall on theme assignment against a 50-item golden set, $2.55,
+24 minutes of wall time on a rate-limited API tier. The two reliability failures the
+dataset was planted with (Watch sync, background rest timer) came out as opportunities
+#1 and #2, and the pipeline surfaced one theme the plan never named, "Interface polish
+and speed praised", out of the uncategorized bucket.
 
 ## Screens
 
@@ -64,9 +69,9 @@ host. To run the pipeline for real:
 
 ```bash
 cp .env.example .env         # add DISTILL_API_KEY
-pnpm data:generate           # builds data/datasets/fitness.json (+ golden set), ~$1.50
+pnpm data:generate           # builds data/datasets/fitness.json (+ golden set), ~$1.25 on Haiku
 pnpm pipeline --dataset fitness --limit 100 --depth fast --out data/runs/fitness-sample.json   # smoke test, ~$0.10
-pnpm pipeline --dataset fitness --depth fast --out data/runs/fitness.json                      # full run, ~$1.50
+pnpm pipeline --dataset fitness --depth fast --out data/runs/fitness.json                      # full run, ~$2.55
 ```
 
 Every script has a hard spend cap (`--max-cost`, default $3.00) and stops itself
@@ -74,14 +79,15 @@ before the call that would cross it. The dataset generator saves progress after 
 batch, so a stopped run resumes without re-spending. `--depth fast` extracts with
 Haiku 4.5 and keeps Opus 5 for the taxonomy, consolidation, opportunities and brief,
 which is where the writing quality shows. The whole flagship dataset plus a real run
-costs about $3 in total, and the hosted demo then costs nothing to serve.
+cost about $4.50 in total including the smoke tests, and the hosted demo then costs
+nothing to serve.
 
 Other scripts:
 
 ```bash
 pnpm test                    # vitest: pipeline pure functions, replay reducer, layout
 pnpm typecheck && pnpm lint
-pnpm tsx scripts/build-demo-fixture.ts   # regenerate the design-derived demo run
+pnpm tsx scripts/build-demo-fixture.ts   # regenerate the design-derived reference fixture
 pnpm tsx scripts/screenshots.ts          # 1440×900 captures from a running dev server
 ```
 
@@ -118,9 +124,16 @@ watching.
   a planned theme distribution, so the demo can show a full run with clean labels. The
   golden set's labels are planted by construction and spot-checked. Upload your own
   data to run on real feedback.
-- The demo run bundled today (`fitness-demo`) is derived from the design's mock data
-  and shows the intended output shape end to end. It gets replaced by a real pipeline
-  run once the dataset is generated.
+- The bundled run (`data/runs/fitness.json`) is a real pipeline run over that dataset.
+  The design-derived fixture that stood in for it before is kept at
+  `design/fixture/fitness-demo.json` as a reference and a test fixture.
+- **Cheap by choice.** Extraction runs on Haiku 4.5, which brought the full run to
+  $2.55. Haiku's prompt-cache minimum is 4,096 tokens and the extraction prompt is well
+  under that, so the live "cache hit rate" counter reads near zero on this run. Sonnet
+  5 extraction (`--depth thorough`) does cache and scores a little higher, for roughly
+  $1.30 more. I chose not to pad the prompt to make the number look better.
+- Long real runs replay compressed: a 24-minute run plays in about 45 seconds by
+  default, with the real elapsed time on the clock and the rate shown next to it.
 - Filters on the dashboard are static in this round. The Brief and Trust screens are
   designed in round two.
 
