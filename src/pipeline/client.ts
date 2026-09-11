@@ -2,6 +2,7 @@ import Anthropic from "@anthropic-ai/sdk";
 import { zodOutputFormat } from "@anthropic-ai/sdk/helpers/zod";
 import type { z } from "zod";
 import {
+  BudgetExceededError,
   LLMOutputError,
   LLMRefusalError,
   LLMRequestError,
@@ -58,6 +59,18 @@ export interface AnthropicLLMOptions {
   defaultMaxTokens?: number;
 }
 
+/**
+ * DISTILL_API_KEY is preferred so the pipeline's key never collides with a
+ * developer tool that also reads ANTHROPIC_API_KEY; both are accepted.
+ */
+export function resolveApiKey(): string | undefined {
+  return process.env.DISTILL_API_KEY || process.env.ANTHROPIC_API_KEY || undefined;
+}
+
+export function hasCredentials(): boolean {
+  return Boolean(resolveApiKey() || process.env.ANTHROPIC_AUTH_TOKEN);
+}
+
 export function usageFromSdk(u: Anthropic.Usage): TokenUsage {
   return {
     inputTokens: u.input_tokens,
@@ -91,7 +104,7 @@ export class AnthropicLLM implements LLM {
     if (opts.client) {
       this.client = opts.client;
     } else {
-      const apiKey = opts.apiKey ?? process.env.ANTHROPIC_API_KEY;
+      const apiKey = opts.apiKey ?? resolveApiKey();
       if (!apiKey && !process.env.ANTHROPIC_AUTH_TOKEN) throw new MissingApiKeyError();
       this.client = new Anthropic(apiKey ? { apiKey } : {});
     }
@@ -187,9 +200,14 @@ export class TrackingLLM implements LLM {
   constructor(
     private readonly inner: LLM,
     private readonly onCall?: (record: CallRecord) => void,
+    private readonly opts: { maxCostUsd?: number } = {},
   ) {}
 
   async parse<T>(params: ParseParams<T>): Promise<ParseResult<T>> {
+    const cap = this.opts.maxCostUsd;
+    if (cap !== undefined && this.cost >= cap) {
+      throw new BudgetExceededError({ spentUsd: this.cost, maxCostUsd: cap, purpose: params.purpose });
+    }
     const result = await this.inner.parse(params);
     const record: CallRecord = {
       purpose: params.purpose,

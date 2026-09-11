@@ -11,13 +11,14 @@ import { mkdir, writeFile } from "node:fs/promises";
 import { dirname, resolve } from "node:path";
 import { parseArgs } from "node:util";
 import type { Depth, PipelineEvent, RunContext } from "../src/lib/types";
-import { AnthropicLLM } from "../src/pipeline/client";
+import { AnthropicLLM, hasCredentials } from "../src/pipeline/client";
 import { MissingApiKeyError, PipelineError } from "../src/pipeline/errors";
 import { loadDataset } from "../src/pipeline/ingest";
 import { resolveModels } from "../src/pipeline/models";
 import { runPipeline } from "../src/pipeline/run";
 
-const USAGE = `usage: pnpm pipeline --dataset <id> --out <file.json> [--limit N] [--depth fast|thorough] [--product "…"] [--decision "…"] [--concurrency N]`;
+const USAGE = `usage: pnpm pipeline --dataset <id> --out <file.json> [--limit N] [--depth fast|thorough] [--product "…"] [--decision "…"] [--concurrency N] [--max-cost 3.00]`;
+const DEFAULT_MAX_COST = "3";
 
 function fail(message: string, code: number): never {
   process.stderr.write(`${message}\n`);
@@ -34,10 +35,13 @@ async function main(): Promise<void> {
       product: { type: "string" },
       decision: { type: "string" },
       concurrency: { type: "string" },
+      "max-cost": { type: "string", default: DEFAULT_MAX_COST },
       help: { type: "boolean", short: "h" },
     },
     strict: true,
   });
+  const maxCostUsd = Number(values["max-cost"]);
+  if (!Number.isFinite(maxCostUsd) || maxCostUsd <= 0) fail(`--max-cost must be a positive dollar amount`, 2);
   if (values.help) {
     process.stdout.write(`${USAGE}\n`);
     return;
@@ -51,9 +55,7 @@ async function main(): Promise<void> {
   const concurrency = values.concurrency !== undefined ? Number(values.concurrency) : undefined;
   if (concurrency !== undefined && (!Number.isInteger(concurrency) || concurrency <= 0)) fail(`--concurrency must be a positive integer`, 2);
 
-  if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) {
-    throw new MissingApiKeyError();
-  }
+  if (!hasCredentials()) throw new MissingApiKeyError();
 
   const dataset = await loadDataset(values.dataset);
   const context: RunContext = {
@@ -66,7 +68,9 @@ async function main(): Promise<void> {
   };
   const cap = limit ?? dataset.items.length;
   const models = resolveModels(depth);
-  process.stderr.write(`distill · dataset ${dataset.meta.id} · ${dataset.items.length} items · cap ${cap} · depth ${depth} · extract ${models.extract} · synth ${models.synth}\n`);
+  process.stderr.write(
+    `distill · dataset ${dataset.meta.id} · ${dataset.items.length} items · cap ${cap} · depth ${depth} · extract ${models.extract} · synth ${models.synth} · spend cap $${maxCostUsd.toFixed(2)}\n`,
+  );
 
   const llm = new AnthropicLLM({ logger: { warn: (m) => process.stderr.write(`  ! ${m}\n`) } });
   const onEvent = (e: PipelineEvent): void => {
@@ -83,6 +87,7 @@ async function main(): Promise<void> {
     llm,
     onEvent,
     concurrency,
+    maxCostUsd,
   });
 
   const outPath = resolve(out);

@@ -63,10 +63,18 @@ The public demo replays pre-computed runs from `data/runs`, so it costs nothing 
 host. To run the pipeline for real:
 
 ```bash
-cp .env.example .env         # add ANTHROPIC_API_KEY
-pnpm data:generate           # builds data/datasets/fitness.json (+ golden set)
-pnpm pipeline --dataset fitness --out data/runs/fitness.json
+cp .env.example .env         # add DISTILL_API_KEY
+pnpm data:generate           # builds data/datasets/fitness.json (+ golden set), ~$1.50
+pnpm pipeline --dataset fitness --limit 100 --depth fast --out data/runs/fitness-sample.json   # smoke test, ~$0.10
+pnpm pipeline --dataset fitness --depth fast --out data/runs/fitness.json                      # full run, ~$1.50
 ```
+
+Every script has a hard spend cap (`--max-cost`, default $3.00) and stops itself
+before the call that would cross it. The dataset generator saves progress after each
+batch, so a stopped run resumes without re-spending. `--depth fast` extracts with
+Haiku 4.5 and keeps Opus 5 for the taxonomy, consolidation, opportunities and brief,
+which is where the writing quality shows. The whole flagship dataset plus a real run
+costs about $3 in total, and the hosted demo then costs nothing to serve.
 
 Other scripts:
 

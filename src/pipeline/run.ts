@@ -38,6 +38,8 @@ export interface RunPipelineOptions {
   dataRoot?: string;
   /** Marks the run as a bundled demo. */
   demo?: boolean;
+  /** Abort (BudgetExceededError) before any call once cumulative spend reaches this. */
+  maxCostUsd?: number;
 }
 
 const STAGE_ORDER: StageName[] = ["ingest", "extract", "cluster", "rank", "brief"];
@@ -57,7 +59,7 @@ export async function runPipeline(opts: RunPipelineOptions): Promise<RunFile> {
   const now = opts.now ?? (() => performance.now());
   const wall = opts.wallClock ?? (() => new Date());
   const timeline = new Timeline(now, opts.onEvent, opts.logger);
-  const tracker = new TrackingLLM(opts.llm);
+  const tracker = new TrackingLLM(opts.llm, undefined, { maxCostUsd: opts.maxCostUsd });
   const counters = (): CounterSnapshot => {
     const u = tracker.usage;
     return {

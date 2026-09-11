@@ -2,10 +2,11 @@
  * Generate data/datasets/fitness.json and fitness.golden.json.
  *
  *   pnpm data:generate [--out data/datasets/fitness.json] [--limit N] [--batch 30]
- *                      [--concurrency 2] [--plan-only] [--reset] [--seed distill-fitness-v1]
+ *                      [--concurrency 2] [--model claude-sonnet-5] [--max-cost 3] [--plan-only] [--reset] [--seed distill-fitness-v1]
  *
  * The plan (which app, month, rating, themes, persona per item) is built
- * deterministically first; claude-opus-5 then writes the review text in
+ * deterministically first; the writer model (default claude-sonnet-5, the
+ * cheap option that still writes convincing reviews) then produces the text in
  * batches with structured outputs. Progress is saved to
  * data/datasets/.fitness.partial.json after every batch, so an interrupted run
  * resumes where it stopped. --plan-only prints plan statistics and exits
@@ -18,7 +19,7 @@ import { z } from "zod";
 import type { Item } from "../src/lib/types";
 import { hashSeed } from "../src/lib/prng";
 import { normalizeText } from "../src/lib/text";
-import { AnthropicLLM, type LLM } from "../src/pipeline/client";
+import { AnthropicLLM, hasCredentials, type LLM, TrackingLLM } from "../src/pipeline/client";
 import { MissingApiKeyError, PipelineError } from "../src/pipeline/errors";
 import { MODEL_IDS } from "../src/pipeline/models";
 import {
@@ -203,6 +204,8 @@ async function main(): Promise<void> {
       batch: { type: "string", default: "30" },
       concurrency: { type: "string", default: "2" },
       seed: { type: "string", default: DEFAULT_SEED },
+      model: { type: "string", default: MODEL_IDS.sonnet },
+      "max-cost": { type: "string", default: "3" },
       "plan-only": { type: "boolean", default: false },
       reset: { type: "boolean", default: false },
       help: { type: "boolean", short: "h" },
@@ -210,7 +213,7 @@ async function main(): Promise<void> {
     strict: true,
   });
   if (values.help) {
-    process.stdout.write("usage: pnpm data:generate [--out file] [--limit N] [--batch 30] [--concurrency 2] [--plan-only] [--reset] [--seed s]\n");
+    process.stdout.write("usage: pnpm data:generate [--out file] [--limit N] [--batch 30] [--concurrency 2] [--model id] [--max-cost 3] [--plan-only] [--reset] [--seed s]\n");
     return;
   }
   const limit = values.limit !== undefined ? Number(values.limit) : undefined;
@@ -223,7 +226,9 @@ async function main(): Promise<void> {
   printPlanStats(plan);
   if (values["plan-only"]) return;
 
-  if (!process.env.ANTHROPIC_API_KEY && !process.env.ANTHROPIC_AUTH_TOKEN) throw new MissingApiKeyError();
+  const maxCostUsd = Number(values["max-cost"]);
+  if (!Number.isFinite(maxCostUsd) || maxCostUsd <= 0) fail("--max-cost must be a positive dollar amount", 2);
+  if (!hasCredentials()) throw new MissingApiKeyError();
 
   const outPath = resolve(values.out);
   const outDir = dirname(outPath);
@@ -234,8 +239,10 @@ async function main(): Promise<void> {
     await writeFile(partialPath, JSON.stringify(p), "utf8");
   };
 
-  const llm = new AnthropicLLM({ logger: { warn: (m) => log(`  ! ${m}`) } });
-  await generateTexts({ plan, llm, model: MODEL_IDS.opus, partial, batchSize, concurrency, save });
+  const llm = new TrackingLLM(new AnthropicLLM({ logger: { warn: (m) => log(`  ! ${m}`) } }), undefined, { maxCostUsd });
+  log(`writer ${values.model} · spend cap $${maxCostUsd.toFixed(2)} · progress saved after every batch`);
+  await generateTexts({ plan, llm, model: values.model, partial, batchSize, concurrency, save });
+  log(`spent $${llm.costUsd.toFixed(2)} on ${llm.calls.length} calls`);
 
   const { items, missing } = toItems(plan, partial);
   if (missing.length > 0) {

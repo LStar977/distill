@@ -109,8 +109,23 @@ export class MissingApiKeyError extends PipelineError {
   constructor() {
     super(
       "missing_api_key",
-      "ANTHROPIC_API_KEY is not set. Export it (or copy .env.example to .env) before running the pipeline.",
+      "No API key found. Set DISTILL_API_KEY (or ANTHROPIC_API_KEY), or copy .env.example to .env, before running the pipeline.",
     );
     this.name = "MissingApiKeyError";
+  }
+}
+
+/** Thrown before a call would push cumulative spend past the configured cap. */
+export class BudgetExceededError extends PipelineError {
+  readonly spentUsd: number;
+  readonly maxCostUsd: number;
+  constructor(info: { spentUsd: number; maxCostUsd: number; purpose: string }) {
+    super(
+      "budget_exceeded",
+      `Stopped before the ${info.purpose} call: $${info.spentUsd.toFixed(2)} spent of the $${info.maxCostUsd.toFixed(2)} cap. Raise --max-cost to continue.`,
+    );
+    this.name = "BudgetExceededError";
+    this.spentUsd = info.spentUsd;
+    this.maxCostUsd = info.maxCostUsd;
   }
 }
